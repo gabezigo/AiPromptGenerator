@@ -276,7 +276,7 @@ body {
 
 .historyList {
   width: 100%;
-  max-width: calc(100vw - 2rem);
+  max-width: none;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -338,7 +338,7 @@ body {
   }
 
   .historyList {
-    max-height: 12rem;
+    max-height: none;
   }
 
   .resultCard {
