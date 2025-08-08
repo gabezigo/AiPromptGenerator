@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const TEMPLATES = [
-  { title: 'Product Launch', template: 'Write a concise and persuasive product launch prompt for {product} highlighting {features} and targetting {audience}.' },
+  { title: 'Product Launch', template: 'Write a concise and persuasive product launch prompt for {product} highlighting {features} and targeting {audience}.' },
   { title: 'Social Media Hook', template: 'Create an engaging social media caption for {platform} to promote {topic} in a playful tone with hashtags.' },
   { title: 'Blog Intro', template: 'Write a compelling blog introduction about {topic} that grabs attention, establishes authority, and outlines the article.' },
   { title: 'Email Outreach', template: 'Draft a short outreach email to {recipient} introducing {offer} and requesting a meeting. Use a professional tone.' },
@@ -10,7 +10,7 @@ const TEMPLATES = [
   { title: 'Creative Writing', template: 'Generate an imaginative writing prompt about {theme} that inspires vivid sensory detail and emotional stakes.' }
 ];
 
-const sampleFields = {
+const DEFAULT_FIELDS = {
   product: 'novel AI writing assistant',
   features: 'smart templates, tone control, and one-click export',
   audience: 'busy content creators',
@@ -22,56 +22,67 @@ const sampleFields = {
   theme: 'a moonlit carnival'
 };
 
-function fillTemplate(tmpl, fields) {
-  return tmpl.replace(/\{(.*?)\}/g, (_, key) => fields[key.trim()] || key);
+function fillTemplate(template, fields) {
+  return template.replace(/\{(.*?)\}/g, (_, key) => fields[key.trim()] || `{${key}}`);
 }
 
 export default function App() {
   const [template, setTemplate] = useState(TEMPLATES[0].template);
   const [title, setTitle] = useState(TEMPLATES[0].title);
-  const [customFields, setCustomFields] = useState(sampleFields);
+  const [fields, setFields] = useState(DEFAULT_FIELDS);
   const [tone, setTone] = useState('creative');
   const [length, setLength] = useState('short');
   const [result, setResult] = useState('');
   const [history, setHistory] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('prompts') || '[]')
-    } catch (e) { return [] }
+      return JSON.parse(localStorage.getItem('prompts') || '[]');
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('prompts', JSON.stringify(history))
+    localStorage.setItem('prompts', JSON.stringify(history));
   }, [history]);
 
-  function generate() {
-    let base = fillTemplate(template, customFields);
-    // tweak based on tone & length
-    let toneText = tone === 'creative' ? 'Make it imaginative and surprising.' : tone === 'formal' ? 'Use a formal and professional tone.' : 'Keep it casual and friendly.';
-    let lenText = length === 'short' ? 'Keep it concise (1-2 sentences).' : length === 'medium' ? 'Provide 2-3 sentences with examples.' : 'Write a longer detailed prompt with examples.';
-    let final = `${base} ${toneText} ${lenText}`;
-    // small randomization
-    if (Math.random() > .7) final += ' Add a quick example usage.';
+  const generatePrompt = () => {
+    const base = fillTemplate(template, fields);
+    const toneText = tone === 'creative'
+      ? 'Make it imaginative and surprising.'
+      : tone === 'formal'
+        ? 'Use a formal and professional tone.'
+        : 'Keep it casual and friendly.';
+    const lengthText = length === 'short'
+      ? 'Keep it concise (1-2 sentences).'
+      : length === 'medium'
+        ? 'Provide 2-3 sentences with examples.'
+        : 'Write a longer detailed prompt with examples.';
+    let final = `${base} ${toneText} ${lengthText}`;
+
+    if (Math.random() > 0.7) final += ' Add a quick example usage.';
     setResult(final);
-    setHistory(h => [{ id: Date.now(), title: title, prompt: final }, ...h].slice(0, 30));
-  }
+    setHistory(h => [{ id: Date.now(), title, prompt: final }, ...h].slice(0, 30));
+  };
 
-  function copyResult() {
-    navigator.clipboard?.writeText(result);
-    alert('Prompt copied to clipboard!');
-  }
+  const copyToClipboard = () => {
+    if (result) {
+      navigator.clipboard.writeText(result);
+      alert('Prompt copied to clipboard!');
+    }
+  };
 
-  function useTemplate(t) {
+  const loadTemplate = t => {
     setTemplate(t.template);
     setTitle(t.title);
-  }
+  };
 
-  function updateField(key, val) {
-    setCustomFields(f => ({ ...f, [key]: val }))
-  }
+  const updateField = (key, value) => {
+    setFields(f => ({ ...f, [key]: value }));
+  };
 
   return (
     <div className="container">
-      <div className="header">
+      <header className="header">
         <div className="brand">
           <div className="logo">AI</div>
           <div>
@@ -79,23 +90,19 @@ export default function App() {
             <div className="subtitle">Sleek prompt generator — modern, fast, Framer-style</div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <div className="small">Theme</div>
-        </div>
-      </div>
+      </header>
 
       <main className="panel">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <div style={{ fontWeight: 700 }}>Create Prompt</div>
-          <div style={{ color: 'var(--muted)', fontSize: 13 }}>AI-first templates</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.2rem', fontWeight: '700' }}>
+          Create Prompt
+          <span style={{ color: 'var(--muted)', fontSize: '1.3rem' }}>AI-first templates</span>
         </div>
 
         <div className="controls">
-          <select className="select" value={title} onChange={(e) => {
-            const t = TEMPLATES.find(t => t.title === e.target.value);
-            useTemplate(t);
-          }}>
-            {TEMPLATES.map(t => <option key={t.title} value={t.title}>{t.title}</option>)}
+          <select className="select" value={title} onChange={e => loadTemplate(TEMPLATES.find(t => t.title === e.target.value))}>
+            {TEMPLATES.map(t => (
+              <option key={t.title} value={t.title}>{t.title}</option>
+            ))}
           </select>
 
           <select className="select" value={tone} onChange={e => setTone(e.target.value)}>
@@ -113,83 +120,127 @@ export default function App() {
 
         <textarea className="textarea" value={template} onChange={e => setTemplate(e.target.value)} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 12, marginTop: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 26rem', gap: '1.2rem', marginTop: '1.2rem' }}>
           <div>
             <div className="grid-inputs">
-              {Object.keys(sampleFields).slice(0, 6).map(k => (
-                <input key={k} className="input" value={customFields[k] || ''} onChange={e => updateField(k, e.target.value)} placeholder={k} />
+              {Object.keys(DEFAULT_FIELDS).slice(0, 6).map(key => (
+                <input
+                  key={key}
+                  className="input"
+                  placeholder={key}
+                  value={fields[key] || ''}
+                  onChange={e => updateField(key, e.target.value)}
+                />
               ))}
             </div>
-            <div className="grid-inputs" style={{ marginTop: 8 }}>
-              {Object.keys(sampleFields).slice(6).map(k => (
-                <input key={k} className="input" value={customFields[k] || ''} onChange={e => updateField(k, e.target.value)} placeholder={k} />
+            <div className="grid-inputs">
+              {Object.keys(DEFAULT_FIELDS).slice(6).map(key => (
+                <input
+                  key={key}
+                  className="input"
+                  placeholder={key}
+                  value={fields[key] || ''}
+                  onChange={e => updateField(key, e.target.value)}
+                />
               ))}
             </div>
+
             <div className="actions">
-              <button className="btn" onClick={generate}>Generate Prompt</button>
-              <button className="btn transparent" onClick={() => {
-                setResult('');
-              }}>Clear</button>
+              <button className="btn" onClick={generatePrompt}>Generate Prompt</button>
+              <button className="btn transparent" onClick={() => setResult('')}>Clear</button>
             </div>
+
             {result && (
-              <div className="resultCard">
+              <section className="resultCard" aria-live="polite">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 700 }}>Generated Prompt</div>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button className="btn" onClick={copyResult}>Copy</button>
-                    <button className="btn transparent" onClick={() => {
-                      const blob = new Blob([result], { type: 'text/plain;charset=utf-8' });
-                      const url = URL.createObjectURL(blob);
-                      const a = document.createElement('a');
-                      a.href = url; a.download = 'prompt.txt'; a.click();
-                      URL.revokeObjectURL(url);
-                    }}>Download</button>
+                  <strong>Generated Prompt</strong>
+                  <div style={{ display: 'flex', gap: '0.8rem' }}>
+                    <button className="btn" onClick={copyToClipboard}>Copy</button>
+                    <button
+                      className="btn transparent"
+                      onClick={() => {
+                        const blob = new Blob([result], { type: 'text/plain;charset=utf-8' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'prompt.txt';
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
+                      Download
+                    </button>
                   </div>
                 </div>
-                <div style={{ marginTop: 10, whiteSpace: 'pre-wrap' }}>{result}</div>
-              </div>
+                <p style={{ marginTop: '1rem', whiteSpace: 'pre-wrap' }}>{result}</p>
+              </section>
             )}
           </div>
 
-          <aside className="sidebar">
-            <div className="panel" style={{ padding: 14 }}>
-              <div style={{ fontWeight: 700 }}>Templates</div>
-              <div className="small" style={{ marginTop: 6 }}>Tap any template to load it</div>
+          <aside className="sidebar" aria-label="Templates and History">
+            <section className="panel" style={{ padding: '1.4rem' }}>
+              <h2 style={{ fontWeight: '700' }}>Templates</h2>
+              <p className="small" style={{ marginTop: '0.6rem' }}>Tap any template to load it</p>
               <div className="templates">
                 {TEMPLATES.map(t => (
-                  <div key={t.title} className="template" onClick={() => useTemplate(t)}>
-                    <div style={{ fontWeight: 700 }}>{t.title}</div>
-                    <div className="small" style={{ marginTop: 6 }}>{t.template}</div>
+                  <div
+                    key={t.title}
+                    className="template"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => loadTemplate(t)}
+                    onKeyDown={e => { if (e.key === 'Enter') loadTemplate(t); }}
+                    aria-label={`Load ${t.title} template`}
+                  >
+                    <div style={{ fontWeight: '700' }}>{t.title}</div>
+                    <p className="small" style={{ marginTop: '0.6rem' }}>{t.template}</p>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
 
-            <div style={{ height: 12 }} />
-            <div className="panel" style={{ padding: 14, marginTop: 12 }}>
+            <section className="panel" style={{ padding: '1.4rem', marginTop: '1.2rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ fontWeight: 700 }}>History</div>
-                <div className="small" style={{ opacity: 0.8 }}>{history.length} saved</div>
+                <h2 style={{ fontWeight: '700' }}>History</h2>
+                <span className="small" style={{ opacity: 0.8 }}>{history.length} saved</span>
               </div>
               <div className="history-list">
+                {history.length === 0 && <p className="small" style={{ marginTop: '0.8rem' }}>No saved prompts yet — generate one!</p>}
                 {history.map(h => (
-                  <div key={h.id} className="history-item" onClick={() => setResult(h.prompt)}>
-                    <div style={{ fontSize: 13, fontWeight: 700 }}>{h.title}</div>
-                    <div className="small" style={{ marginTop: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{h.prompt}</div>
+                  <div
+                    key={h.id}
+                    className="history-item"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setResult(h.prompt)}
+                    onKeyDown={e => { if (e.key === 'Enter') setResult(h.prompt); }}
+                    aria-label={`Load saved prompt: ${h.title}`}
+                  >
+                    <div>{h.title}</div>
+                    <div>{h.prompt}</div>
                   </div>
                 ))}
-                {history.length === 0 && <div className="small" style={{ marginTop: 8 }}>No saved prompts yet — generate one!</div>}
               </div>
-              <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
-                <button className="btn" onClick={() => { navigator.clipboard?.writeText(history.map(h => h.prompt).join('\n---\n')); alert('All prompts copied'); }}>Copy All</button>
-                <button className="btn transparent" onClick={() => { setHistory([]); }}>Clear</button>
+              <div style={{ marginTop: '1rem', display: 'flex', gap: '0.8rem' }}>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    navigator.clipboard.writeText(history.map(h => h.prompt).join('\n---\n'));
+                    alert('All prompts copied');
+                  }}
+                >
+                  Copy All
+                </button>
+                <button className="btn transparent" onClick={() => setHistory([])}>Clear</button>
               </div>
-            </div>
+            </section>
           </aside>
         </div>
       </main>
 
-      <div className="footer">Built with care — tweak templates, save favorites, and export prompts.</div>
+      <footer className="footer">
+        Built with care — tweak templates, save favorites, and export prompts.
+      </footer>
     </div>
   );
 }
