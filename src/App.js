@@ -34,8 +34,11 @@ export default function App() {
   const [length, setLength] = useState('short');
   const [result, setResult] = useState('');
   const [history, setHistory] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('prompts') || '[]'); }
-    catch { return []; }
+    try {
+      return JSON.parse(localStorage.getItem('prompts') || '[]');
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
@@ -44,20 +47,27 @@ export default function App() {
 
   function generate() {
     const base = fillTemplate(templateText, PLACEHOLDERS);
-    const toneText = tone === 'creative' ? 'Make it imaginative and surprising.' :
-      tone === 'formal' ? 'Use a formal and professional tone.' : 'Keep it casual and friendly.';
-    const lengthText = length === 'short' ? 'Keep it concise (1-2 sentences).' :
-      length === 'medium' ? 'Provide 2-3 sentences with examples.' : 'Write a longer detailed prompt with examples.';
+    const toneText =
+      tone === 'creative'
+        ? 'Make it imaginative and surprising.'
+        : tone === 'formal'
+        ? 'Use a formal and professional tone.'
+        : 'Keep it casual and friendly.';
+    const lengthText =
+      length === 'short'
+        ? 'Keep it concise (1-2 sentences).'
+        : length === 'medium'
+        ? 'Provide 2-3 sentences with examples.'
+        : 'Write a longer detailed prompt with examples.';
     let finalPrompt = `${base} ${toneText} ${lengthText}`;
     if (Math.random() > 0.7) finalPrompt += ' Add a quick example usage.';
     setResult(finalPrompt);
-    setHistory(h => [{ id: Date.now(), title: selectedTemplate.title, prompt: finalPrompt }, ...h].slice(0, 30));
+    setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt: finalPrompt }, ...h].slice(0, 30));
   }
 
   function copyResult() {
     if (!result) return;
     navigator.clipboard.writeText(result);
-    // keep alert for now, can replace with toast later
     alert('Prompt copied to clipboard!');
   }
 
@@ -66,7 +76,9 @@ export default function App() {
     const blob = new Blob([result], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'prompt.txt'; a.click();
+    a.href = url;
+    a.download = 'prompt.txt';
+    a.click();
     URL.revokeObjectURL(url);
   }
 
@@ -90,17 +102,25 @@ export default function App() {
 
       <main className="panel main-panel">
         <div className="controls">
-          <select className="select" value={selectedTemplate.title} onChange={e => loadTemplate(TEMPLATES.find(t => t.title === e.target.value))}>
-            {TEMPLATES.map(t => <option key={t.title} value={t.title}>{t.title}</option>)}
+          <select
+            className="select"
+            value={selectedTemplate.title}
+            onChange={(e) => loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))}
+          >
+            {TEMPLATES.map((t) => (
+              <option key={t.title} value={t.title}>
+                {t.title}
+              </option>
+            ))}
           </select>
 
-          <select className="select" value={tone} onChange={e => setTone(e.target.value)}>
+          <select className="select" value={tone} onChange={(e) => setTone(e.target.value)}>
             <option value="creative">Creative</option>
             <option value="formal">Formal</option>
             <option value="casual">Casual</option>
           </select>
 
-          <select className="select" value={length} onChange={e => setLength(e.target.value)}>
+          <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
             <option value="short">Short</option>
             <option value="medium">Medium</option>
             <option value="long">Long</option>
@@ -110,14 +130,18 @@ export default function App() {
         <textarea
           className="textarea"
           value={templateText}
-          onChange={e => setTemplateText(e.target.value)}
+          onChange={(e) => setTemplateText(e.target.value)}
           placeholder="Edit your prompt template here..."
           spellCheck={false}
         />
 
         <div className="actions">
-          <button className="btn" onClick={generate}>Generate Prompt</button>
-          <button className="btn transparent" onClick={() => setResult('')}>Clear</button>
+          <button className="btn" onClick={generate}>
+            Generate Prompt
+          </button>
+          <button className="btn transparent" onClick={() => setResult('')}>
+            Clear
+          </button>
         </div>
 
         {result && (
@@ -125,8 +149,12 @@ export default function App() {
             <div className="resultHeader">
               <strong>Generated Prompt</strong>
               <div className="resultButtons">
-                <button className="btn small" onClick={copyResult}>Copy</button>
-                <button className="btn small transparent" onClick={downloadResult}>Download</button>
+                <button className="btn small" onClick={copyResult}>
+                  Copy
+                </button>
+                <button className="btn small transparent" onClick={downloadResult}>
+                  Download
+                </button>
               </div>
             </div>
             <p className="resultText">{result}</p>
@@ -139,7 +167,7 @@ export default function App() {
           <h3>Templates</h3>
           <small>Tap to load a template</small>
           <div className="templates">
-            {TEMPLATES.map(t => (
+            {TEMPLATES.map((t) => (
               <div key={t.title} className="template" onClick={() => loadTemplate(t)} tabIndex={0} role="button">
                 <strong>{t.title}</strong>
                 <p>{t.template}</p>
@@ -152,18 +180,38 @@ export default function App() {
           <h3>History</h3>
           <small>{history.length} saved</small>
           <div className="historyList">
-            {history.length ? history.map(h => (
-              <div key={h.id} className="historyItem" onClick={() => setResult(h.prompt)} tabIndex={0} role="button">
-                <strong>{h.title}</strong>
-                <p className="truncate">{h.prompt}</p>
-              </div>
-            )) : <p>No saved prompts yet — generate one!</p>}
+            {history.length ? (
+              history.map((h) => (
+                <div
+                  key={h.id}
+                  className="historyItem"
+                  onClick={() => setResult(h.prompt)}
+                  tabIndex={0}
+                  role="button"
+                >
+                  <strong>{h.title}</strong>
+                  <p className="truncate">{h.prompt}</p>
+                </div>
+              ))
+            ) : (
+              <p>No saved prompts yet — generate one!</p>
+            )}
           </div>
 
           {history.length > 0 && (
             <div className="historyActions">
-              <button className="btn small" onClick={() => { navigator.clipboard.writeText(history.map(h => h.prompt).join('\n---\n')); alert('All prompts copied!'); }}>Copy All</button>
-              <button className="btn small transparent" onClick={() => setHistory([])}>Clear History</button>
+              <button
+                className="btn small"
+                onClick={() => {
+                  navigator.clipboard.writeText(history.map((h) => h.prompt).join('\n---\n'));
+                  alert('All prompts copied!');
+                }}
+              >
+                Copy All
+              </button>
+              <button className="btn small transparent" onClick={() => setHistory([])}>
+                Clear History
+              </button>
             </div>
           )}
         </div>
