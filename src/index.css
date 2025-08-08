@@ -279,10 +279,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  max-height: 18rem;
-  overflow-y: auto;
+  max-height: 20rem; /* increased max height */
+  overflow-y: auto;  /* scroll if needed */
   padding-right: 0.2rem;
   box-sizing: border-box;
+  transition: max-height 0.3s ease;
 }
 
 .historyItem {
