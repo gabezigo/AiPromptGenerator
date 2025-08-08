@@ -10,18 +10,6 @@ const TEMPLATES = [
   { title: 'Creative Writing', template: 'Generate an imaginative writing prompt about {theme} that inspires vivid sensory detail and emotional stakes.' }
 ];
 
-// Sample placeholders - just for showing default text inside template
-const samplePlaceholders = {
-  product: 'novel AI writing assistant',
-  features: 'smart templates, tone control, and one-click export',
-  audience: 'busy content creators',
-  platform: 'Twitter',
-  topic: 'how to write better prompts',
-  recipient: 'a product manager',
-  offer: 'early access to the beta',
-  benefit: 'time-saving automation',
-  theme: 'a moonlit carnival'
-};
 
 function fillTemplate(tmpl, fields) {
   return tmpl.replace(/\{(.*?)\}/g, (_, key) => fields[key.trim()] || `{${key}}`);
