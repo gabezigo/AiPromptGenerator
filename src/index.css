@@ -221,7 +221,9 @@ body {
   top: 3.2rem;
   max-height: calc(100vh - 6.4rem);
   overflow-y: auto;
+  padding-bottom: 1rem; /* optional for breathing space */
 }
+
 
 .panel {
   background: linear-gradient(
