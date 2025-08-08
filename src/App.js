@@ -10,7 +10,6 @@ const TEMPLATES = [
   { title: 'Creative Writing', template: 'Generate an imaginative writing prompt about {theme} that inspires vivid sensory detail and emotional stakes.' }
 ];
 
-// These placeholders exist only for internal prompt generation — NOT displayed in UI.
 const PLACEHOLDERS = {
   product: 'novel AI writing assistant',
   features: 'smart templates, tone control, and one-click export',
@@ -92,7 +91,7 @@ export default function App() {
     <div className="container">
       <header className="header">
         <div className="brand">
-          <div className="logo">AI</div>
+          <div className="logo" aria-label="AI logo">AI</div>
           <div>
             <div className="title">AI Prompt Writer</div>
             <div className="subtitle">Sleek prompt generator — modern, fast</div>
@@ -100,12 +99,13 @@ export default function App() {
         </div>
       </header>
 
-      <main className="panel main-panel">
+      <main className="panel main-panel" role="main">
         <div className="controls">
           <select
             className="select"
             value={selectedTemplate.title}
             onChange={(e) => loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))}
+            aria-label="Select prompt template"
           >
             {TEMPLATES.map((t) => (
               <option key={t.title} value={t.title}>
@@ -114,13 +114,23 @@ export default function App() {
             ))}
           </select>
 
-          <select className="select" value={tone} onChange={(e) => setTone(e.target.value)}>
+          <select
+            className="select"
+            value={tone}
+            onChange={(e) => setTone(e.target.value)}
+            aria-label="Select tone"
+          >
             <option value="creative">Creative</option>
             <option value="formal">Formal</option>
             <option value="casual">Casual</option>
           </select>
 
-          <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
+          <select
+            className="select"
+            value={length}
+            onChange={(e) => setLength(e.target.value)}
+            aria-label="Select length"
+          >
             <option value="short">Short</option>
             <option value="medium">Medium</option>
             <option value="long">Long</option>
@@ -133,33 +143,42 @@ export default function App() {
           onChange={(e) => setTemplateText(e.target.value)}
           placeholder="Edit your prompt template here..."
           spellCheck={false}
+          aria-label="Edit prompt template"
         />
 
         <div className="actions">
-          <button className="btn" onClick={generate}>
+          <button className="btn" onClick={generate} disabled={!templateText.trim()}>
             Generate Prompt
           </button>
-          <button className="btn transparent" onClick={() => setResult('')}>
+          <button className="btn transparent" onClick={() => setResult('')} disabled={!result}>
             Clear
           </button>
         </div>
 
-        {result && (
-          <div className="resultCard">
-            <div className="resultHeader">
-              <strong>Generated Prompt</strong>
-              <div className="resultButtons">
-                <button className="btn small" onClick={copyResult}>
-                  Copy
-                </button>
-                <button className="btn small transparent" onClick={downloadResult}>
-                  Download
-                </button>
+        {/* Always render resultCard to avoid layout shift, but hide if no result */}
+        <div
+          className="resultCard"
+          style={{ visibility: result ? 'visible' : 'hidden', height: result ? 'auto' : 0, pointerEvents: result ? 'auto' : 'none' }}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {result && (
+            <>
+              <div className="resultHeader">
+                <strong>Generated Prompt</strong>
+                <div className="resultButtons">
+                  <button className="btn small" onClick={copyResult} aria-label="Copy generated prompt">
+                    Copy
+                  </button>
+                  <button className="btn small transparent" onClick={downloadResult} aria-label="Download generated prompt">
+                    Download
+                  </button>
+                </div>
               </div>
-            </div>
-            <p className="resultText">{result}</p>
-          </div>
-        )}
+              <p className="resultText">{result}</p>
+            </>
+          )}
+        </div>
       </main>
 
       <aside className="sidebar" aria-label="Templates and history">
@@ -168,7 +187,20 @@ export default function App() {
           <small>Tap to load a template</small>
           <div className="templates">
             {TEMPLATES.map((t) => (
-              <div key={t.title} className="template" onClick={() => loadTemplate(t)} tabIndex={0} role="button">
+              <div
+                key={t.title}
+                className="template"
+                onClick={() => loadTemplate(t)}
+                tabIndex={0}
+                role="button"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    loadTemplate(t);
+                    e.preventDefault();
+                  }
+                }}
+                aria-label={`Load template ${t.title}`}
+              >
                 <strong>{t.title}</strong>
                 <p>{t.template}</p>
               </div>
@@ -188,6 +220,13 @@ export default function App() {
                   onClick={() => setResult(h.prompt)}
                   tabIndex={0}
                   role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setResult(h.prompt);
+                      e.preventDefault();
+                    }
+                  }}
+                  aria-label={`Load prompt from history titled ${h.title}`}
                 >
                   <strong>{h.title}</strong>
                   <p className="truncate">{h.prompt}</p>
@@ -206,10 +245,11 @@ export default function App() {
                   navigator.clipboard.writeText(history.map((h) => h.prompt).join('\n---\n'));
                   alert('All prompts copied!');
                 }}
+                aria-label="Copy all saved prompts"
               >
                 Copy All
               </button>
-              <button className="btn small transparent" onClick={() => setHistory([])}>
+              <button className="btn small transparent" onClick={() => setHistory([])} aria-label="Clear prompt history">
                 Clear History
               </button>
             </div>
