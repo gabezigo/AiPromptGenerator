@@ -219,7 +219,7 @@ body {
 .sidebar {
   position: sticky;
   top: 3.2rem;
-  max-height: calc(100vh - 6.4rem);
+  max-height: none;
   overflow-y: auto;
   padding-bottom: 1rem; /* optional for breathing space */
 }
@@ -281,8 +281,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  max-height: 20rem; /* increased max height */
-  overflow-y: auto;  /* scroll if needed */
+  max-height: 0; /* increased max height */
+  overflow-y: visible;  /* scroll if needed */
   padding-right: 0.2rem;
   box-sizing: border-box;
   transition: max-height 0.3s ease;
