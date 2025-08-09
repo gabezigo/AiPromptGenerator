@@ -330,7 +330,7 @@ export default function App() {
           <div className="logo">AI</div>
           <div>
             <div className="title">AI Prompt Writer</div>
-            <div className="subtitle">Sleek prompt generator — modern, fast</div>
+            <div className="subtitle">Creative Prompts For Writers</div>
           </div>
         </div>
       </header>
