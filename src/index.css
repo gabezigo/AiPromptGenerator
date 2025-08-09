@@ -332,18 +332,18 @@ body {
   margin-bottom: 1.6rem; /* space below each dropdown */
 }
 
-/* Make buttons wrap and have space between */
-.actions {
+ .actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.6rem; /* space between buttons */
+  flex-wrap: nowrap;  /* prevent wrapping */
+  gap: 1.6rem;        /* space between buttons */
   margin-top: 1.6rem; /* space above buttons */
+  justify-content: flex-start; /* align left */
 }
 
-/* Make buttons take about half width with margin below */
 .actions .btn {
-  flex: 1 1 48%;
-  margin-bottom: 1.6rem;
+  flex: 1 1 auto; /* let buttons size naturally */
+  min-width: 12rem; /* ensure buttons don’t get too narrow */
+  margin-bottom: 0; /* remove margin-bottom to avoid extra vertical space */
 }
 
 
