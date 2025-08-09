@@ -1,447 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+// Expanded templates with multiple sentence structures
 const TEMPLATES = [
   {
     title: 'Product Launch',
-    template:
-      'Write a persuasive product launch prompt for {product} highlighting {features} and targeting {audience}. Use a {tone} tone and keep it {length}.',
+    templates: [
+      'Write a {adjective} and {adjective2} product launch prompt for {product} highlighting {features} and targeting {audience}.',
+      'Create a {adjective} announcement for {product} that emphasizes {features} to attract {audience}.',
+      'Generate a {adjective} launch message for {product} focusing on {features} and designed for {audience}.',
+    ],
   },
   {
-    title: 'Social Media Caption',
-    template:
-      'Create an engaging {tone} social media caption for {platform} about {topic} that resonates with {audience}.',
+    title: 'Social Media Hook',
+    templates: [
+      'Craft an engaging social media caption for {platform} to promote {topic} with a {toneWord} tone and trending hashtags.',
+      'Create a {toneWord} and catchy post for {platform} about {topic} that drives engagement.',
+      'Write a playful {toneWord} social media hook for {platform} centered on {topic}.',
+    ],
+  },
+  {
+    title: 'Blog Intro',
+    templates: [
+      'Write a {adjective} introduction about {topic} that grabs attention and establishes authority.',
+      'Create a compelling opening paragraph for a blog on {topic} that hooks readers immediately.',
+      'Generate an {adjective} blog intro about {topic}, highlighting key points and engaging the audience.',
+    ],
   },
   {
     title: 'Email Outreach',
-    template:
-      'Draft a {tone} outreach email to {recipient} introducing {offer} for {product} and requesting a meeting. Keep it {length}.',
+    templates: [
+      'Draft a short and {toneWord} outreach email to {recipient} introducing {offer} and requesting a meeting.',
+      'Write a professional yet {toneWord} email pitching {offer} to {recipient}.',
+      'Create a concise email to {recipient} about {offer} with a {toneWord} tone, asking for a follow-up.',
+    ],
   },
   {
     title: 'Ad Copy',
-    template:
-      'Produce a compelling ad copy for {product} focusing on {benefit} with a {tone} tone and a strong call to action.',
+    templates: [
+      'Produce a {adjective} ad copy for {product} that focuses on the benefit of {benefit} and includes a clear CTA.',
+      'Write a persuasive advertisement for {product} highlighting {benefit} with a strong call-to-action.',
+      'Create a {adjective} promotional text for {product} emphasizing {benefit} and encouraging action.',
+    ],
   },
   {
-    title: 'Blog Introduction',
-    template:
-      'Write a captivating blog introduction on {topic} that appeals to {audience} using a {tone} tone and {length} length.',
-  },
-  {
-    title: 'Creative Writing Prompt',
-    template:
-      'Generate an imaginative writing prompt about {theme} that inspires vivid sensory detail and emotional stakes with a {tone} tone.',
-  },
-  {
-    title: 'Product Description',
-    template:
-      'Write a detailed product description for {product} emphasizing {features} aimed at {audience} with a {tone} style.',
-  },
-  {
-    title: 'Landing Page Headline',
-    template:
-      'Craft a compelling landing page headline for {product} that highlights {benefit} and appeals to {audience} in a {tone} tone.',
-  },
-  {
-    title: 'FAQ Answer',
-    template:
-      'Provide a clear and helpful FAQ answer regarding {topic} for {audience} using a {tone} tone and concise {length} explanation.',
-  },
-  {
-    title: 'Video Script',
-    template:
-      'Write a {length} video script about {topic} targeting {audience} with a {tone} tone and focus on {goal}.',
-  },
-  {
-    title: 'Brand Slogan',
-    template:
-      'Create a catchy brand slogan for {product} that communicates {benefit} and evokes {emotion}.',
-  },
-  {
-    title: 'Customer Testimonial',
-    template:
-      'Generate a positive customer testimonial for {product} emphasizing {features} and expressing {emotion}.',
-  },
-  {
-    title: 'Newsletter Subject Line',
-    template:
-      'Write an attention-grabbing newsletter subject line about {topic} for {audience} using a {tone} style.',
-  },
-  {
-    title: 'Press Release Intro',
-    template:
-      'Draft a professional press release introduction announcing {offer} related to {product} aimed at {audience}.',
-  },
-  {
-    title: 'Event Invitation',
-    template:
-      'Compose an inviting event invitation for {event} targeting {audience} with a {tone} tone and clear call to action.',
+    title: 'Creative Writing',
+    templates: [
+      'Generate an imaginative writing prompt about {theme} that inspires vivid sensory detail and emotional stakes.',
+      'Write a creative scenario involving {theme} that challenges the reader’s imagination.',
+      'Create a {adjective} creative writing prompt centered on {theme} to inspire unique storytelling.',
+    ],
   },
 ];
 
-const PLACEHOLDER_OPTIONS = {
-  product: [
-    'AI writing assistant',
-    'creative content generator',
-    'smart email automation tool',
-    'marketing copywriter bot',
-    'social media caption creator',
-    'SEO blog assistant',
-    'video script writer',
-    'brand slogan generator',
-    'customer feedback analyzer',
-    'productivity booster',
-    'digital marketing platform',
-    'e-commerce tool',
-    'content scheduling app',
-    'influencer outreach tool',
-    'email drip campaign software',
-    'sales funnel optimizer',
-    'blog topic generator',
-    'content calendar planner',
-    'advertisement manager',
-    'SEO keyword research tool',
-    'conversion rate optimizer',
-    'online reputation manager',
-    'brand awareness tool',
-    'lead generation platform',
-    'customer engagement tool',
-    'multilingual content creator',
-    'creative brainstorming assistant',
-    'webinar promotion assistant',
-    'customer loyalty program manager',
-    'market research analyzer',
-    'social listening platform',
-    'A/B testing tool',
-    'content personalization engine',
-    'user experience analyzer',
-    'email subject line optimizer',
-    'in-app messaging tool',
-    'affiliate marketing software',
-    'paid ads manager',
-    'landing page builder',
-    'video marketing tool',
-    'copyediting assistant',
-    'automated report generator',
-    'voice assistant integration',
-    'interactive chatbot',
-    'virtual event coordinator',
-    'influencer collaboration platform',
-    'real-time analytics dashboard',
-    'mobile marketing platform',
-    'customer feedback collector',
-    'AI-powered chatbot',
-  ],
-  features: [
-    'smart templates',
-    'tone control',
-    'one-click export',
-    'AI-powered suggestions',
-    'collaboration tools',
-    'real-time analytics',
-    'multi-language support',
-    'SEO optimization',
-    'custom branding',
-    'drag-and-drop interface',
-    'automated scheduling',
-    'A/B testing',
-    'performance tracking',
-    'content calendar',
-    'audience segmentation',
-    'social media integration',
-    'email automation',
-    'lead scoring',
-    'CRM integration',
-    'personalized recommendations',
-    'data visualization',
-    'behavior tracking',
-    'keyword research',
-    'market insights',
-    'custom workflows',
-    'analytics reports',
-    'user feedback',
-    'content suggestions',
-    'brand monitoring',
-    'automated alerts',
-    'responsive design',
-    'multi-device support',
-    'voice recognition',
-    'image generation',
-    'real-time collaboration',
-    'customer journey mapping',
-    'automated translations',
-    'content tagging',
-    'performance benchmarks',
-    'smart notifications',
-    'sentiment analysis',
-    'content approval workflows',
-    'version control',
-    'SEO audits',
-    'data export',
-    'custom API',
-    'email templates',
-    'customer segmentation',
-  ],
-  audience: [
-    'busy content creators',
-    'social media managers',
-    'freelance writers',
-    'marketing teams',
-    'small business owners',
-    'e-commerce entrepreneurs',
-    'bloggers and vloggers',
-    'digital nomads',
-    'startup founders',
-    'non-profit organizations',
-    'online educators',
-    'influencers',
-    'advertising agencies',
-    'public relations professionals',
-    'customer support teams',
-    'sales representatives',
-    'product managers',
-    'content strategists',
-    'SEO specialists',
-    'email marketers',
-    'affiliate marketers',
-    'community managers',
-    'brand managers',
-    'event planners',
-    'mobile app developers',
-    'software engineers',
-    'graphic designers',
-    'video producers',
-    'podcasters',
-    'e-learning creators',
-    'HR professionals',
-    'fundraising coordinators',
-    'real estate agents',
-    'healthcare marketers',
-    'travel bloggers',
-    'photographers',
-    'online retailers',
-    'music promoters',
-    'fashion designers',
-    'consultants',
-    'legal professionals',
-    'finance advisors',
-    'tech enthusiasts',
-    'environmental activists',
-    'government agencies',
-    'journalists',
-    'writers and authors',
-    'students',
-  ],
-  platform: [
-    'Twitter',
-    'Facebook',
-    'LinkedIn',
-    'Instagram',
-    'TikTok',
-    'Pinterest',
-    'Reddit',
-    'YouTube',
-    'Snapchat',
-    'Clubhouse',
-    'Medium',
-    'Quora',
-    'Tumblr',
-    'Discord',
-    'Slack',
-    'WhatsApp',
-    'Telegram',
-    'WeChat',
-    'Vimeo',
-    'Twitch',
-    'Google Ads',
-    'Bing Ads',
-    'Amazon Ads',
-    'Email',
-    'Blog',
-    'Podcast',
-    'Webinar',
-    'Landing Page',
-  ],
-  topic: [
-    'how to write better prompts',
-    'boosting engagement on social media',
-    'effective email outreach',
-    'creative storytelling',
-    'building a personal brand',
-    'maximizing productivity',
-    'increasing website traffic',
-    'launching new products',
-    'customer retention strategies',
-    'AI in content marketing',
-    'social media trends',
-    'content repurposing',
-    'SEO best practices',
-    'video marketing tips',
-    'email marketing strategies',
-    'lead generation tactics',
-    'branding essentials',
-    'marketing automation',
-    'content personalization',
-    'influencer marketing',
-    'conversion optimization',
-    'blogging tips',
-    'public relations',
-    'customer feedback analysis',
-    'digital advertising',
-    'mobile marketing',
-    'content creation workflows',
-    'webinar hosting',
-    'email list building',
-    'data-driven marketing',
-    'user engagement',
-    'customer experience',
-    'market research insights',
-    'multichannel marketing',
-    'online community building',
-    'affiliate marketing',
-    'content SEO',
-    'creative campaigns',
-    'brand storytelling',
-    'social selling',
-    'email deliverability',
-    'content calendar planning',
-  ],
-  recipient: [
-    'a product manager',
-    'a marketing director',
-    'a CEO',
-    'a startup founder',
-    'a small business owner',
-    'a sales lead',
-    'a customer service manager',
-    'a social media influencer',
-    'a project manager',
-    'a content strategist',
-    'an HR manager',
-    'a business analyst',
-    'an investor',
-    'a freelancer',
-    'a journalist',
-    'a blogger',
-    'an editor',
-    'a developer',
-    'a designer',
-    'a community manager',
-  ],
-  offer: [
-    'early access to the beta',
-    'exclusive discount',
-    'free trial',
-    'limited time offer',
-    'special promotion',
-    'VIP membership',
-    'complimentary consultation',
-    'free demo',
-    'bonus content',
-    'early bird pricing',
-    'premium package',
-    'subscription discount',
-    'bundle deal',
-    'launch event invite',
-    'free upgrade',
-    'extended trial period',
-  ],
-  benefit: [
-    'time-saving automation',
-    'increased engagement',
-    'higher conversion rates',
-    'better brand awareness',
-    'improved customer retention',
-    'enhanced productivity',
-    'streamlined workflows',
-    'cost-effective marketing',
-    'personalized messaging',
-    'data-driven decisions',
-    'real-time insights',
-    'scalable solutions',
-    'competitive advantage',
-    'seamless integrations',
-    'customer satisfaction',
-    'innovative features',
-  ],
-  theme: [
-    'a moonlit carnival',
-    'a futuristic cityscape',
-    'an enchanted forest',
-    'a bustling marketplace',
-    'a serene beach sunset',
-    'a vintage carnival',
-    'a cosmic adventure',
-    'a mysterious mansion',
-    'a vibrant street festival',
-    'a whimsical garden',
-    'an underwater expedition',
-    'a snowy mountain retreat',
-    'a magical library',
-    'a steampunk workshop',
-    'a tropical island',
-    'a desert oasis',
-  ],
-  tone: [
-    'creative',
-    'formal',
-    'casual',
-    'playful',
-    'serious',
-    'enthusiastic',
-    'friendly',
-    'professional',
-    'humorous',
-    'inspirational',
-  ],
-  length: ['short', 'medium', 'long', 'detailed', 'concise'],
-  goal: [
-    'increasing conversions',
-    'boosting brand awareness',
-    'engaging new customers',
-    'improving customer loyalty',
-    'driving website traffic',
-    'enhancing social media presence',
-    'streamlining marketing campaigns',
-    'optimizing email outreach',
-    'generating qualified leads',
-    'building community trust',
-  ],
-  emotion: [
-    'excitement',
-    'trust',
-    'curiosity',
-    'joy',
-    'inspiration',
-    'confidence',
-    'urgency',
-    'hope',
-    'admiration',
-    'surprise',
-  ],
-  event: [
-    'product launch party',
-    'webinar',
-    'virtual conference',
-    'networking event',
-    'annual meetup',
-    'workshop',
-    'training session',
-    'fundraising gala',
-    'charity run',
-    'hackathon',
-  ],
+// Word banks for random insertion
+const WORD_BANKS = {
+  adjective: ['concise', 'persuasive', 'engaging', 'compelling', 'creative', 'imaginative', 'playful', 'professional', 'casual', 'fresh', 'dynamic'],
+  adjective2: ['clear', 'vivid', 'catchy', 'strong', 'impactful', 'friendly', 'brief', 'memorable', 'inviting'],
+  toneWord: ['creative', 'formal', 'casual', 'friendly', 'professional', 'playful', 'warm', 'enthusiastic', 'optimistic', 'serious'],
+  product: ['novel AI writing assistant', 'smart productivity app', 'innovative design tool', 'cutting-edge software', 'advanced analytics platform'],
+  features: ['smart templates, tone control, and one-click export', 'real-time collaboration and version control', 'AI-powered insights and automation', 'customizable workflows and integrations'],
+  audience: ['busy content creators', 'small business owners', 'marketing professionals', 'tech enthusiasts', 'creative writers'],
+  platform: ['Twitter', 'Instagram', 'Facebook', 'LinkedIn', 'TikTok'],
+  topic: ['how to write better prompts', 'maximizing social media reach', 'effective content marketing', 'AI in everyday work', 'creative storytelling techniques'],
+  recipient: ['a product manager', 'a marketing director', 'a startup founder', 'an editor', 'a potential client'],
+  offer: ['early access to the beta', 'exclusive product demo', 'special discount offer', 'free trial period', 'invitation to a webinar'],
+  benefit: ['time-saving automation', 'increased productivity', 'enhanced creativity', 'cost reduction', 'improved engagement'],
+  theme: ['a moonlit carnival', 'a futuristic cityscape', 'an enchanted forest', 'a mysterious island', 'a bustling marketplace'],
 };
 
+// Helper to pick a random item from array
 function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function fillTemplate(tmpl, options) {
-  return tmpl.replace(/\{(.*?)\}/g, (_, key) => {
-    const choices = options[key.trim()];
-    return choices ? randomChoice(choices) : `{${key}}`;
-  });
+// Fill template string with random words from banks
+function fillTemplate(tmpl, tone, length) {
+  // Select random words from word banks
+  const replacements = {
+    adjective: randomChoice(WORD_BANKS.adjective),
+    adjective2: randomChoice(WORD_BANKS.adjective2),
+    toneWord: tone,
+    product: randomChoice(WORD_BANKS.product),
+    features: randomChoice(WORD_BANKS.features),
+    audience: randomChoice(WORD_BANKS.audience),
+    platform: randomChoice(WORD_BANKS.platform),
+    topic: randomChoice(WORD_BANKS.topic),
+    recipient: randomChoice(WORD_BANKS.recipient),
+    offer: randomChoice(WORD_BANKS.offer),
+    benefit: randomChoice(WORD_BANKS.benefit),
+    theme: randomChoice(WORD_BANKS.theme),
+  };
+
+  // Replace placeholders in template string
+  let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
+
+  // Append tone and length instructions
+  const toneText =
+    tone === 'creative'
+      ? 'Make it imaginative and surprising.'
+      : tone === 'formal'
+      ? 'Use a formal and professional tone.'
+      : 'Keep it casual and friendly.';
+  const lengthText =
+    length === 'short'
+      ? 'Keep it concise (1-2 sentences).'
+      : length === 'medium'
+      ? 'Provide 2-3 sentences with examples.'
+      : 'Write a longer detailed prompt with examples.';
+
+  filled += ` ${toneText} ${lengthText}`;
+
+  // Randomly add example usage sometimes
+  if (Math.random() > 0.7) filled += ' Add a quick example usage.';
+
+  return filled;
 }
 
 export default function App() {
@@ -462,16 +135,15 @@ export default function App() {
   }, [history]);
 
   function generate() {
-    // We override tone and length placeholders with currently selected values
-    const options = {
-      ...PLACEHOLDER_OPTIONS,
-      tone: [tone],
-      length: [length],
-    };
+    // Pick a random sentence structure for the selected template
+    const tmpl =
+      selectedTemplate.templates[Math.floor(Math.random() * selectedTemplate.templates.length)];
 
-    const finalPrompt = fillTemplate(selectedTemplate.template, options);
-    setResult(finalPrompt);
-    setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt: finalPrompt }, ...h].slice(0, 30));
+    // Fill it with random words
+    const prompt = fillTemplate(tmpl, tone, length);
+
+    setResult(prompt);
+    setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt }, ...h].slice(0, 30));
   }
 
   function copyResult() {
@@ -503,7 +175,7 @@ export default function App() {
           <div className="logo">AI</div>
           <div>
             <div className="title">AI Prompt Writer</div>
-            <div className="subtitle">Supercharged prompt generator — millions of unique prompts</div>
+            <div className="subtitle">Sleek prompt generator — modern, fast</div>
           </div>
         </div>
       </header>
@@ -513,7 +185,9 @@ export default function App() {
           <select
             className="select"
             value={selectedTemplate.title}
-            onChange={(e) => loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))}
+            onChange={(e) =>
+              loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))
+            }
           >
             {TEMPLATES.map((t) => (
               <option key={t.title} value={t.title}>
@@ -523,21 +197,27 @@ export default function App() {
           </select>
 
           <select className="select" value={tone} onChange={(e) => setTone(e.target.value)}>
-            {PLACEHOLDER_OPTIONS.tone.map((t) => (
-              <option key={t} value={t}>
-                {t.charAt(0).toUpperCase() + t.slice(1)}
-              </option>
-            ))}
+            <option value="creative">Creative</option>
+            <option value="formal">Formal</option>
+            <option value="casual">Casual</option>
           </select>
 
           <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
-            {PLACEHOLDER_OPTIONS.length.map((l) => (
-              <option key={l} value={l}>
-                {l.charAt(0).toUpperCase() + l.slice(1)}
-              </option>
-            ))}
+            <option value="short">Short</option>
+            <option value="medium">Medium</option>
+            <option value="long">Long</option>
           </select>
         </div>
+
+        <textarea
+          className="textarea"
+          readOnly
+          value={result || 'Generate a prompt to see it here...'}
+          placeholder="Generated prompt will appear here"
+          spellCheck={false}
+          rows={6}
+          style={{ resize: 'none' }}
+        />
 
         <div className="actions">
           <button className="btn" onClick={generate}>
@@ -580,7 +260,7 @@ export default function App() {
                 role="button"
               >
                 <strong>{t.title}</strong>
-                <p>{t.template}</p>
+                <p>{t.templates[0]}</p>
               </div>
             ))}
           </div>
@@ -607,6 +287,7 @@ export default function App() {
               <p>No saved prompts yet — generate one!</p>
             )}
           </div>
+
           {history.length > 0 && (
             <div className="historyActions">
               <button
