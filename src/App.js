@@ -340,7 +340,7 @@ export default function App() {
         <div className="controls">
           {/* Template dropdown */}
           <select
-            className="select"
+            className="select tempSelect"
             value={selectedTemplate.title}
             onChange={(e) => loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))}
           >
