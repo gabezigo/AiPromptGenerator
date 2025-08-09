@@ -253,7 +253,8 @@ function fillTemplate(tmpl, tone, length) {
     emotion: randomChoice(WORD_BANKS.emotion),
   };
 
-  let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || {${key}});
+  let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
+
 
   const toneText = TONE_INSTRUCTIONS[tone] || 'Keep it casual and friendly.';
 
