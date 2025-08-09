@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Expanded templates with multiple sentence structures
+// --- FULL TEMPLATES as you originally provided ---
 const TEMPLATES = [
   {
     title: 'Product Launch',
@@ -130,7 +130,7 @@ const TEMPLATES = [
   },
 ];
 
-// Expanded word banks with many options
+// --- FULL WORD_BANKS as you originally provided ---
 const WORD_BANKS = {
   adjective: [
     'concise', 'persuasive', 'engaging', 'compelling', 'creative', 'imaginative', 'playful',
@@ -234,16 +234,16 @@ function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Fill template with random words and add tone/length instructions (no custom overrides)
-function fillTemplate(tmpl, tone, length) {
+// Fill template with random words (or selected ones) and tone/length instructions
+function fillTemplate(tmpl, tone, length, platformSel, audienceSel) {
   const replacements = {
     adjective: randomChoice(WORD_BANKS.adjective),
     adjective2: randomChoice(WORD_BANKS.adjective2),
     toneWord: tone,
     product: randomChoice(WORD_BANKS.product),
     features: randomChoice(WORD_BANKS.features),
-    audience: randomChoice(WORD_BANKS.audience),
-    platform: randomChoice(WORD_BANKS.platform),
+    audience: audienceSel || randomChoice(WORD_BANKS.audience),
+    platform: platformSel || randomChoice(WORD_BANKS.platform),
     topic: randomChoice(WORD_BANKS.topic),
     recipient: randomChoice(WORD_BANKS.recipient),
     offer: randomChoice(WORD_BANKS.offer),
@@ -252,6 +252,11 @@ function fillTemplate(tmpl, tone, length) {
     event: randomChoice(WORD_BANKS.event),
     emotion: randomChoice(WORD_BANKS.emotion),
   };
+
+  // Ensure tone always mentioned if missing {toneWord}
+  if (!tmpl.includes('{toneWord}')) {
+    tmpl = `Using a ${tone} tone, ${tmpl}`;
+  }
 
   let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
 
@@ -275,6 +280,8 @@ export default function App() {
   const [selectedTemplate, setSelectedTemplate] = useState(TEMPLATES[0]);
   const [tone, setTone] = useState('creative');
   const [length, setLength] = useState('short');
+  const [platformSel, setPlatformSel] = useState('');
+  const [audienceSel, setAudienceSel] = useState('');
   const [result, setResult] = useState('');
   const [history, setHistory] = useState(() => {
     try {
@@ -291,7 +298,7 @@ export default function App() {
   function generate() {
     const tmpl =
       selectedTemplate.templates[Math.floor(Math.random() * selectedTemplate.templates.length)];
-    const prompt = fillTemplate(tmpl, tone, length);
+    const prompt = fillTemplate(tmpl, tone, length, platformSel, audienceSel);
     setResult(prompt);
     setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt }, ...h].slice(0, 30));
   }
@@ -333,6 +340,7 @@ export default function App() {
       <main className="panel main-panel">
         {/* Controls */}
         <div className="controls">
+          {/* Template dropdown */}
           <select
             className="select"
             value={selectedTemplate.title}
@@ -345,16 +353,40 @@ export default function App() {
             ))}
           </select>
 
+          {/* Tone dropdown - dynamic */}
           <select className="select" value={tone} onChange={(e) => setTone(e.target.value)}>
-            <option value="creative">Creative</option>
-            <option value="formal">Formal</option>
-            <option value="casual">Casual</option>
+            {Object.keys(TONE_INSTRUCTIONS).map((t) => (
+              <option key={t} value={t}>
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </option>
+            ))}
           </select>
 
+          {/* Length dropdown */}
           <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
             <option value="short">Short</option>
             <option value="medium">Medium</option>
             <option value="long">Long</option>
+          </select>
+
+          {/* New Platform dropdown */}
+          <select className="select" value={platformSel} onChange={(e) => setPlatformSel(e.target.value)}>
+            <option value="">Random Platform</option>
+            {WORD_BANKS.platform.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+
+          {/* New Audience dropdown */}
+          <select className="select" value={audienceSel} onChange={(e) => setAudienceSel(e.target.value)}>
+            <option value="">Random Audience</option>
+            {WORD_BANKS.audience.map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
+            ))}
           </select>
         </div>
 
