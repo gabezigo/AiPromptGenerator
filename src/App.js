@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Expanded templates with multiple sentence structures
-const templates = [
+const TEMPLATES = [
   {
     title: 'Product Launch',
     templates: [
