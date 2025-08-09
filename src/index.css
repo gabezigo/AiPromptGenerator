@@ -329,7 +329,7 @@ body {
 /* Make dropdowns take about half width and add vertical spacing */
 .controls .select {
   flex: 0 1 48%;
-  margin-bottom: 1rem; /* space below each dropdown */
+  margin-bottom: 0.6rem; /* space below each dropdown */
 }
 
 .tempSelect {
