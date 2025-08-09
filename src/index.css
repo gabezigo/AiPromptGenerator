@@ -326,23 +326,21 @@ body {
   margin-top: 0.8rem;
 }
 
-/* Make dropdowns take about half width and add vertical spacing */
-.controls .select {
-  flex: 0 1 48%;
-  margin-bottom: 1.6rem; /* space below each dropdown */
-}
-
-/* Make buttons wrap and have space between */
-.actions {
+.controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.6rem; /* space between buttons */
-  margin-top: 1.6rem; /* space above buttons */
+  gap: 1.6rem;
 }
 
-/* Make buttons take about half width with margin below */
-.actions .btn {
-  flex: 1 1 48%;
+/* Make first select full width */
+.controls .select:first-child {
+  flex: 1 1 100%;
+  margin-bottom: 1.6rem;
+}
+
+/* Other selects share the row */
+.controls .select:not(:first-child) {
+  flex: 0 1 48%;
   margin-bottom: 1.6rem;
 }
 
