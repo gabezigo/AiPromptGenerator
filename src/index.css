@@ -334,6 +334,7 @@ body {
 
 .tempSelect {
   flex: 1 1 auto !important;
+  margin-bottom: 0.4rem !important;
 }
 
  .actions {
