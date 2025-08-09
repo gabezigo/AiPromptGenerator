@@ -234,23 +234,23 @@ function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Fill template with random words and add tone/length instructions (no custom overrides)
-function fillTemplate(tmpl, tone, length) {
+// Fill template with random words or custom overrides and add tone/length instructions
+function fillTemplate(tmpl, tone, length, customWords = {}) {
   const replacements = {
     adjective: randomChoice(WORD_BANKS.adjective),
     adjective2: randomChoice(WORD_BANKS.adjective2),
     toneWord: tone,
-    product: randomChoice(WORD_BANKS.product),
+    product: customWords.product || randomChoice(WORD_BANKS.product),
     features: randomChoice(WORD_BANKS.features),
-    audience: randomChoice(WORD_BANKS.audience),
-    platform: randomChoice(WORD_BANKS.platform),
-    topic: randomChoice(WORD_BANKS.topic),
-    recipient: randomChoice(WORD_BANKS.recipient),
-    offer: randomChoice(WORD_BANKS.offer),
-    benefit: randomChoice(WORD_BANKS.benefit),
-    theme: randomChoice(WORD_BANKS.theme),
-    event: randomChoice(WORD_BANKS.event),
-    emotion: randomChoice(WORD_BANKS.emotion),
+    audience: customWords.audience || randomChoice(WORD_BANKS.audience),
+    platform: customWords.platform || randomChoice(WORD_BANKS.platform),
+    topic: customWords.topic || randomChoice(WORD_BANKS.topic),
+    recipient: customWords.recipient || randomChoice(WORD_BANKS.recipient),
+    offer: customWords.offer || randomChoice(WORD_BANKS.offer),
+    benefit: customWords.benefit || randomChoice(WORD_BANKS.benefit),
+    theme: customWords.theme || randomChoice(WORD_BANKS.theme),
+    event: customWords.event || randomChoice(WORD_BANKS.event),
+    emotion: customWords.emotion || randomChoice(WORD_BANKS.emotion),
   };
 
   let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
@@ -284,14 +284,32 @@ export default function App() {
     }
   });
 
+  // Custom overrides for placeholders, excluding toneWord
+  const [customWords, setCustomWords] = useState({
+    product: '',
+    audience: '',
+    topic: '',
+    recipient: '',
+    offer: '',
+    benefit: '',
+    theme: '',
+    event: '',
+    emotion: '',
+    platform: '',
+  });
+
   useEffect(() => {
     localStorage.setItem('prompts', JSON.stringify(history));
   }, [history]);
 
   function generate() {
+    // Pick a random template sentence from the selected category
     const tmpl =
       selectedTemplate.templates[Math.floor(Math.random() * selectedTemplate.templates.length)];
-    const prompt = fillTemplate(tmpl, tone, length);
+
+    // Fill placeholders with random words and add tone/length info and custom overrides
+    const prompt = fillTemplate(tmpl, tone, length, customWords);
+
     setResult(prompt);
     setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt }, ...h].slice(0, 30));
   }
@@ -318,6 +336,11 @@ export default function App() {
     setResult('');
   }
 
+  function handleCustomWordChange(e) {
+    const { name, value } = e.target;
+    setCustomWords((prev) => ({ ...prev, [name]: value }));
+  }
+
   return (
     <div className="container">
       <header className="header">
@@ -331,7 +354,47 @@ export default function App() {
       </header>
 
       <main className="panel main-panel">
-        {/* Controls */}
+        {/* Custom inputs for overrides (without Tone Word) */}
+        <div
+          className="custom-inputs"
+          style={{
+            marginBottom: '1rem',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+          }}
+        >
+          {[
+            { label: 'Product', name: 'product' },
+            { label: 'Audience', name: 'audience' },
+            { label: 'Topic', name: 'topic' },
+            { label: 'Recipient', name: 'recipient' },
+            { label: 'Offer', name: 'offer' },
+            { label: 'Benefit', name: 'benefit' },
+            { label: 'Theme', name: 'theme' },
+            { label: 'Event', name: 'event' },
+            { label: 'Emotion', name: 'emotion' },
+            { label: 'Platform', name: 'platform' },
+          ].map(({ label, name }) => (
+            <input
+              key={name}
+              name={name}
+              placeholder={`${label} (custom)`}
+              value={customWords[name]}
+              onChange={handleCustomWordChange}
+              style={{
+                flex: '1 1 140px',
+                padding: '6px 8px',
+                fontSize: '0.9rem',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+              }}
+              autoComplete="off"
+            />
+          ))}
+        </div>
+
+        {/* Controls including tone dropdown */}
         <div className="controls">
           <select
             className="select"
@@ -349,6 +412,18 @@ export default function App() {
             <option value="creative">Creative</option>
             <option value="formal">Formal</option>
             <option value="casual">Casual</option>
+            <option value="friendly">Friendly</option>
+            <option value="professional">Professional</option>
+            <option value="playful">Playful</option>
+            <option value="warm">Warm</option>
+            <option value="enthusiastic">Enthusiastic</option>
+            <option value="optimistic">Optimistic</option>
+            <option value="serious">Serious</option>
+            <option value="humorous">Humorous</option>
+            <option value="sarcastic">Sarcastic</option>
+            <option value="dramatic">Dramatic</option>
+            <option value="informative">Informative</option>
+            <option value="sincere">Sincere</option>
           </select>
 
           <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
@@ -356,105 +431,41 @@ export default function App() {
             <option value="medium">Medium</option>
             <option value="long">Long</option>
           </select>
-        </div>
 
-        <textarea
-          className="textarea"
-          readOnly
-          value={result || 'Generate a prompt to see it here...'}
-          placeholder="Generated prompt will appear here"
-          spellCheck={false}
-          rows={6}
-          style={{ resize: 'none' }}
-        />
-
-        <div className="actions">
-          <button className="btn" onClick={generate}>
-            Generate Prompt
+          <button className="btn primary" onClick={generate}>
+            Generate
           </button>
-          <button className="btn transparent" onClick={() => setResult('')}>
+          <button className="btn" onClick={copyResult} disabled={!result}>
+            Copy
+          </button>
+          <button className="btn" onClick={downloadResult} disabled={!result}>
+            Download
+          </button>
+          <button className="btn" onClick={() => setResult('')}>
             Clear
           </button>
         </div>
 
-        {result && (
-          <div className="resultCard">
-            <div className="resultHeader">
-              <strong>Generated Prompt</strong>
-              <div className="resultButtons">
-                <button className="btn small" onClick={copyResult}>
-                  Copy
-                </button>
-                <button className="btn small transparent" onClick={downloadResult}>
-                  Download
-                </button>
-              </div>
-            </div>
-            <p className="resultText">{result}</p>
-          </div>
-        )}
-      </main>
+        <textarea
+          readOnly
+          className="result"
+          value={result}
+          placeholder="Your generated prompt will appear here..."
+        />
 
-      <aside className="sidebar" aria-label="Templates and history">
-        <div className="panel templatesPanel">
-          <h3>Templates</h3>
-          <small>Tap to load a template</small>
-          <div className="templates">
-            {TEMPLATES.map((t) => (
-              <div
-                key={t.title}
-                className="template"
-                onClick={() => loadTemplate(t)}
-                tabIndex={0}
-                role="button"
-              >
-                <strong>{t.title}</strong>
-                <p>{t.templates[0]}</p>
-              </div>
+        {/* History panel */}
+        <div className="history">
+          <h3>History (last 30)</h3>
+          {history.length === 0 && <p>No history yet.</p>}
+          <ul>
+            {history.map(({ id, title, prompt }) => (
+              <li key={id}>
+                <strong>{title}:</strong> {prompt}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
-
-        <div className="panel historyPanel">
-          <h3>History</h3>
-          <small>{history.length} saved</small>
-          <div className="historyList">
-            {history.length ? (
-              history.map((h) => (
-                <div
-                  key={h.id}
-                  className="historyItem"
-                  onClick={() => setResult(h.prompt)}
-                  tabIndex={0}
-                  role="button"
-                >
-                  <strong>{h.title}</strong>
-                  <p className="truncate">{h.prompt}</p>
-                </div>
-              ))
-            ) : (
-              <p>No saved prompts yet — generate one!</p>
-            )}
-          </div>
-
-          {history.length > 0 && (
-            <div className="historyActions">
-              <button
-                className="btn small"
-                onClick={() => {
-                  navigator.clipboard.writeText(history.map((h) => h.prompt).join('\n---\n'));
-                  alert('All prompts copied!');
-                }}
-              >
-                Copy All
-              </button>
-              <button className="btn small transparent" onClick={() => setHistory([])}>
-                Clear History
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
+      </main>
     </div>
   );
 }
