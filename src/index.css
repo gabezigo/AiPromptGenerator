@@ -326,6 +326,27 @@ body {
   margin-top: 0.8rem;
 }
 
+/* Make dropdowns take about half width and add vertical spacing */
+.controls .select {
+  flex: 0 1 48%;
+  margin-bottom: 1.6rem; /* space below each dropdown */
+}
+
+/* Make buttons wrap and have space between */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem; /* space between buttons */
+  margin-top: 1.6rem; /* space above buttons */
+}
+
+/* Make buttons take about half width with margin below */
+.actions .btn {
+  flex: 1 1 48%;
+  margin-bottom: 1.6rem;
+}
+
+
 /* Responsive */
 @media (max-width: 62.5rem) {
   .container {
