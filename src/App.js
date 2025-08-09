@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// --- FULL TEMPLATES (your original) ---
+// --- FULL TEMPLATES ---
 const TEMPLATES = [
   {
     title: 'Product Launch',
@@ -130,7 +130,7 @@ const TEMPLATES = [
   },
 ];
 
-// --- FULL WORD_BANKS (your original) ---
+// --- FULL WORD_BANKS ---
 const WORD_BANKS = {
   adjective: [
     'concise', 'persuasive', 'engaging', 'compelling', 'creative', 'imaginative', 'playful',
@@ -210,7 +210,7 @@ const WORD_BANKS = {
   emotion: ['excitement', 'trust', 'curiosity', 'joy', 'inspiration', 'confidence', 'surprise'],
 };
 
-// --- TONE_INSTRUCTIONS (single definition) ---
+// --- TONE_INSTRUCTIONS ---
 const TONE_INSTRUCTIONS = {
   creative: 'Make it imaginative and surprising.',
   formal: 'Use a formal and professional tone.',
@@ -234,53 +234,52 @@ function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Replace placeholders in a string using WORD_BANKS or keep token if not found
-function fillPlaceholdersFromBanks(text) {
-  return text.replace(/\{(.*?)\}/g, (_, key) => {
-    const k = key.trim();
-    const bank = WORD_BANKS[k];
-    if (bank && bank.length) return randomChoice(bank);
-    // fallback: show a readable token so user knows to edit
-    return `<${k.toUpperCase()}>`;
-  });
-}
+// Fill template with random words and tone/length instructions
+function fillTemplate(tmpl, tone, length) {
+  const replacements = {
+    adjective: randomChoice(WORD_BANKS.adjective),
+    adjective2: randomChoice(WORD_BANKS.adjective2),
+    toneWord: tone,
+    product: randomChoice(WORD_BANKS.product),
+    features: randomChoice(WORD_BANKS.features),
+    audience: randomChoice(WORD_BANKS.audience),
+    platform: randomChoice(WORD_BANKS.platform),
+    topic: randomChoice(WORD_BANKS.topic),
+    recipient: randomChoice(WORD_BANKS.recipient),
+    offer: randomChoice(WORD_BANKS.offer),
+    benefit: randomChoice(WORD_BANKS.benefit),
+    theme: randomChoice(WORD_BANKS.theme),
+    event: randomChoice(WORD_BANKS.event),
+    emotion: randomChoice(WORD_BANKS.emotion),
+  };
 
-// Build a starter seed for the top editable field based on selected template
-function buildSeedText(tmplObj, tone, length) {
-  // use the first template for preview/seed
-  const seedTemplate = tmplObj.templates[0];
-  const filled = fillPlaceholdersFromBanks(seedTemplate);
-  const toneText = TONE_INSTRUCTIONS[tone] ? `Tone: ${tone}. ${TONE_INSTRUCTIONS[tone]}` : '';
-  const lengthHint = length ? `Length: ${length}.` : '';
-  return `${filled}\n\n${toneText} ${lengthHint}`.trim();
-}
+  // Ensure tone always mentioned if missing {toneWord}
+  if (!tmpl.includes('{toneWord}')) {
+    tmpl = `Using a ${tone} tone, ${tmpl}`;
+  }
 
-// Fill final prompt: if builder contains tokens, replace with banks; then append tone + length instructions
-function buildFinalPromptFromBuilder(builderText, tone, length) {
-  let text = fillPlaceholdersFromBanks(builderText);
-  const toneText = TONE_INSTRUCTIONS[tone] || '';
+  let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
+
+  const toneText = TONE_INSTRUCTIONS[tone] || 'Keep it casual and friendly.';
+
   const lengthText =
     length === 'short'
       ? 'Keep it concise (1-2 sentences).'
       : length === 'medium'
       ? 'Provide 2-3 sentences with examples.'
       : 'Write a longer detailed prompt with examples.';
-  // Ensure tone instruction appended if not already present
-  if (!text.includes(toneText)) text += ` ${toneText}`;
-  text += ` ${lengthText}`;
-  return text.trim();
+
+  filled += ` ${toneText} ${lengthText}`;
+
+  if (Math.random() > 0.7) filled += ' Add a quick example usage.';
+
+  return filled;
 }
 
 export default function App() {
   const [selectedTemplate, setSelectedTemplate] = useState(TEMPLATES[0]);
   const [tone, setTone] = useState('creative');
   const [length, setLength] = useState('short');
-
-  // builderText is the editable seed field above the buttons (user can edit)
-  const [builderText, setBuilderText] = useState(() =>
-    buildSeedText(TEMPLATES[0], 'creative', 'short')
-  );
-
   const [result, setResult] = useState('');
   const [history, setHistory] = useState(() => {
     try {
@@ -290,22 +289,16 @@ export default function App() {
     }
   });
 
-  // Update builder seed when template/tone/length change — overwrite only if user didn't edit manually recently.
-  // For simplicity here we update the seed whenever the template changes.
-  useEffect(() => {
-    setBuilderText(buildSeedText(selectedTemplate, tone, length));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTemplate, tone, length]);
-
   useEffect(() => {
     localStorage.setItem('prompts', JSON.stringify(history));
   }, [history]);
 
   function generate() {
-    // Use the builder text (user-edited) as the base; fill remaining placeholders and append instructions
-    const finalPrompt = buildFinalPromptFromBuilder(builderText, tone, length);
-    setResult(finalPrompt);
-    setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt: finalPrompt }, ...h].slice(0, 30));
+    const tmpl =
+      selectedTemplate.templates[Math.floor(Math.random() * selectedTemplate.templates.length)];
+    const prompt = fillTemplate(tmpl, tone, length);
+    setResult(prompt);
+    setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt }, ...h].slice(0, 30));
   }
 
   function copyResult() {
@@ -327,8 +320,7 @@ export default function App() {
 
   function loadTemplate(t) {
     setSelectedTemplate(t);
-    // seed will update via useEffect
-    setResult(''); // clear previous result so UI is consistent
+    setResult('');
   }
 
   return (
@@ -359,7 +351,7 @@ export default function App() {
             ))}
           </select>
 
-          {/* Tone dropdown - dynamic */}
+          {/* Tone dropdown */}
           <select className="select" value={tone} onChange={(e) => setTone(e.target.value)}>
             {Object.keys(TONE_INSTRUCTIONS).map((t) => (
               <option key={t} value={t}>
@@ -376,37 +368,20 @@ export default function App() {
           </select>
         </div>
 
-        {/* TOP EDITABLE FIELD — the prompt builder.
-            This is purposeful: the user can edit this seed before generating final prompt below. */}
-        <textarea
-          className="textarea"
-          value={builderText}
-          onChange={(e) => setBuilderText(e.target.value)}
-          placeholder="Edit the seed prompt here or pick a template..."
-          spellCheck={false}
-          rows={6}
-          style={{ resize: 'vertical' }}
-        />
+        {/* Removed top textarea */}
 
         <div className="actions">
           <button className="btn" onClick={generate}>
             Generate Prompt
           </button>
-          <button
-            className="btn transparent"
-            onClick={() => {
-              setResult('');
-              // reset builder to the seed for the current template/tone/length
-              setBuilderText(buildSeedText(selectedTemplate, tone, length));
-            }}
-          >
+          <button className="btn transparent" onClick={() => setResult('')}>
             Clear
           </button>
         </div>
 
-        {/* RESULT CARD (only after generation) */}
+        {/* Only show result here below buttons */}
         {result && (
-          <div className="resultCard" aria-live="polite">
+          <div className="resultCard">
             <div className="resultHeader">
               <strong>Generated Prompt</strong>
               <div className="resultButtons">
@@ -445,42 +420,25 @@ export default function App() {
 
         <div className="panel historyPanel">
           <h3>History</h3>
-          <small>{history.length} saved</small>
+          <small>Recent prompts you generated</small>
           <div className="historyList">
-            {history.length ? (
-              history.map((h) => (
-                <div
-                  key={h.id}
-                  className="historyItem"
-                  onClick={() => setResult(h.prompt)}
-                  tabIndex={0}
-                  role="button"
-                >
-                  <strong>{h.title}</strong>
-                  <p className="truncate">{h.prompt.length > 120 ? h.prompt.slice(0, 120) + '…' : h.prompt}</p>
-                </div>
-              ))
-            ) : (
-              <p>No saved prompts yet — generate one!</p>
-            )}
-          </div>
-
-          {history.length > 0 && (
-            <div className="historyActions">
-              <button
-                className="btn small"
-                onClick={() => {
-                  navigator.clipboard.writeText(history.map((h) => h.prompt).join('\n---\n'));
-                  alert('All prompts copied!');
-                }}
+            {history.length === 0 && <p>No prompts generated yet.</p>}
+            {history.map(({ id, title, prompt }) => (
+              <div
+                key={id}
+                className="historyItem"
+                onClick={() => setResult(prompt)}
+                tabIndex={0}
+                role="button"
               >
-                Copy All
-              </button>
-              <button className="btn small transparent" onClick={() => setHistory([])}>
-                Clear History
-              </button>
-            </div>
-          )}
+                <strong>{title}</strong>
+                <p>{prompt.length > 70 ? prompt.slice(0, 70) + '...' : prompt}</p>
+              </div>
+            ))}
+          </div>
+          <button className="btn transparent clearHistory" onClick={() => setHistory([])}>
+            Clear History
+          </button>
         </div>
       </aside>
     </div>
