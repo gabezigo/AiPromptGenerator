@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Expanded templates with multiple sentence structures
+// Your full template sets with multiple templates per category
 const TEMPLATES = [
   {
     title: 'Product Launch',
@@ -53,30 +53,62 @@ const TEMPLATES = [
   },
 ];
 
-// Word banks for random insertion
+// Word banks for random substitutions
 const WORD_BANKS = {
-  adjective: ['concise', 'persuasive', 'engaging', 'compelling', 'creative', 'imaginative', 'playful', 'professional', 'casual', 'fresh', 'dynamic'],
-  adjective2: ['clear', 'vivid', 'catchy', 'strong', 'impactful', 'friendly', 'brief', 'memorable', 'inviting'],
-  toneWord: ['creative', 'formal', 'casual', 'friendly', 'professional', 'playful', 'warm', 'enthusiastic', 'optimistic', 'serious'],
-  product: ['novel AI writing assistant', 'smart productivity app', 'innovative design tool', 'cutting-edge software', 'advanced analytics platform'],
-  features: ['smart templates, tone control, and one-click export', 'real-time collaboration and version control', 'AI-powered insights and automation', 'customizable workflows and integrations'],
-  audience: ['busy content creators', 'small business owners', 'marketing professionals', 'tech enthusiasts', 'creative writers'],
+  adjective: [
+    'concise', 'persuasive', 'engaging', 'compelling', 'creative', 'imaginative', 'playful',
+    'professional', 'casual', 'fresh', 'dynamic', 'vibrant', 'impactful', 'memorable',
+  ],
+  adjective2: [
+    'clear', 'vivid', 'catchy', 'strong', 'impactful', 'friendly', 'brief', 'memorable', 'inviting',
+  ],
+  toneWord: [
+    'creative', 'formal', 'casual', 'friendly', 'professional', 'playful', 'warm', 'enthusiastic',
+    'optimistic', 'serious',
+  ],
+  product: [
+    'novel AI writing assistant', 'smart productivity app', 'innovative design tool',
+    'cutting-edge software', 'advanced analytics platform',
+  ],
+  features: [
+    'smart templates, tone control, and one-click export',
+    'real-time collaboration and version control',
+    'AI-powered insights and automation',
+    'customizable workflows and integrations',
+  ],
+  audience: [
+    'busy content creators', 'small business owners', 'marketing professionals',
+    'tech enthusiasts', 'creative writers',
+  ],
   platform: ['Twitter', 'Instagram', 'Facebook', 'LinkedIn', 'TikTok'],
-  topic: ['how to write better prompts', 'maximizing social media reach', 'effective content marketing', 'AI in everyday work', 'creative storytelling techniques'],
-  recipient: ['a product manager', 'a marketing director', 'a startup founder', 'an editor', 'a potential client'],
-  offer: ['early access to the beta', 'exclusive product demo', 'special discount offer', 'free trial period', 'invitation to a webinar'],
-  benefit: ['time-saving automation', 'increased productivity', 'enhanced creativity', 'cost reduction', 'improved engagement'],
-  theme: ['a moonlit carnival', 'a futuristic cityscape', 'an enchanted forest', 'a mysterious island', 'a bustling marketplace'],
+  topic: [
+    'how to write better prompts', 'maximizing social media reach', 'effective content marketing',
+    'AI in everyday work', 'creative storytelling techniques',
+  ],
+  recipient: [
+    'a product manager', 'a marketing director', 'a startup founder', 'an editor', 'a potential client',
+  ],
+  offer: [
+    'early access to the beta', 'exclusive product demo', 'special discount offer',
+    'free trial period', 'invitation to a webinar',
+  ],
+  benefit: [
+    'time-saving automation', 'increased productivity', 'enhanced creativity',
+    'cost reduction', 'improved engagement',
+  ],
+  theme: [
+    'a moonlit carnival', 'a futuristic cityscape', 'an enchanted forest',
+    'a mysterious island', 'a bustling marketplace',
+  ],
 };
 
-// Helper to pick a random item from array
+// Helper to pick a random element
 function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Fill template string with random words from banks
+// Fill template with random words and add tone/length instructions
 function fillTemplate(tmpl, tone, length) {
-  // Select random words from word banks
   const replacements = {
     adjective: randomChoice(WORD_BANKS.adjective),
     adjective2: randomChoice(WORD_BANKS.adjective2),
@@ -92,16 +124,15 @@ function fillTemplate(tmpl, tone, length) {
     theme: randomChoice(WORD_BANKS.theme),
   };
 
-  // Replace placeholders in template string
   let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
 
-  // Append tone and length instructions
   const toneText =
     tone === 'creative'
       ? 'Make it imaginative and surprising.'
       : tone === 'formal'
       ? 'Use a formal and professional tone.'
       : 'Keep it casual and friendly.';
+
   const lengthText =
     length === 'short'
       ? 'Keep it concise (1-2 sentences).'
@@ -111,7 +142,6 @@ function fillTemplate(tmpl, tone, length) {
 
   filled += ` ${toneText} ${lengthText}`;
 
-  // Randomly add example usage sometimes
   if (Math.random() > 0.7) filled += ' Add a quick example usage.';
 
   return filled;
@@ -135,11 +165,11 @@ export default function App() {
   }, [history]);
 
   function generate() {
-    // Pick a random sentence structure for the selected template
+    // Pick a random template sentence from the selected category
     const tmpl =
       selectedTemplate.templates[Math.floor(Math.random() * selectedTemplate.templates.length)];
 
-    // Fill it with random words
+    // Fill placeholders with random words and add tone/length info
     const prompt = fillTemplate(tmpl, tone, length);
 
     setResult(prompt);
@@ -185,9 +215,7 @@ export default function App() {
           <select
             className="select"
             value={selectedTemplate.title}
-            onChange={(e) =>
-              loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))
-            }
+            onChange={(e) => loadTemplate(TEMPLATES.find((t) => t.title === e.target.value))}
           >
             {TEMPLATES.map((t) => (
               <option key={t.title} value={t.title}>
