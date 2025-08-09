@@ -329,20 +329,35 @@ body {
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.6rem;
+  gap: 1.2rem 1.6rem; /* vertical gap 1.2rem, horizontal gap 1.6rem */
+  align-items: center;
 }
 
-/* Make first select full width */
-.controls .select:first-child {
-  flex: 1 1 100%;
-  margin-bottom: 1.6rem;
+.select {
+  flex: 1 1 12rem; /* minimum width so they don’t shrink too much */
+  min-width: 12rem;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 0.1rem solid rgba(255, 255, 255, 0.04);
+  padding: 1rem;
+  border-radius: 1rem;
+  color: inherit;
+  font-size: 1.6rem;
+  cursor: pointer;
 }
 
-/* Other selects share the row */
-.controls .select:not(:first-child) {
-  flex: 0 1 48%;
-  margin-bottom: 1.6rem;
+.actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 0.8rem; /* add a bit of vertical spacing */
+  flex-wrap: nowrap;
+  justify-content: flex-start;
 }
+
+.actions .btn {
+  min-width: 12rem; /* keep buttons a nice consistent width */
+}
+
 
 
 /* Responsive */
