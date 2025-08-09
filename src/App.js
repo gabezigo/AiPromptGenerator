@@ -253,7 +253,7 @@ function fillTemplate(tmpl, tone, length) {
     emotion: randomChoice(WORD_BANKS.emotion),
   };
 
-  let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
+  let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || {${key}});
 
   const toneText = TONE_INSTRUCTIONS[tone] || 'Keep it casual and friendly.';
 
@@ -264,7 +264,7 @@ function fillTemplate(tmpl, tone, length) {
       ? 'Provide 2-3 sentences with examples.'
       : 'Write a longer detailed prompt with examples.';
 
-  filled += ` ${toneText} ${lengthText}`;
+  filled +=  ${toneText} ${lengthText};
 
   if (Math.random() > 0.7) filled += ' Add a quick example usage.';
 
@@ -349,18 +349,6 @@ export default function App() {
             <option value="creative">Creative</option>
             <option value="formal">Formal</option>
             <option value="casual">Casual</option>
-            <option value="friendly">Friendly</option>
-            <option value="professional">Professional</option>
-            <option value="playful">Playful</option>
-            <option value="warm">Warm</option>
-            <option value="enthusiastic">Enthusiastic</option>
-            <option value="optimistic">Optimistic</option>
-            <option value="serious">Serious</option>
-            <option value="humorous">Humorous</option>
-            <option value="sarcastic">Sarcastic</option>
-            <option value="dramatic">Dramatic</option>
-            <option value="informative">Informative</option>
-            <option value="sincere">Sincere</option>
           </select>
 
           <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
@@ -410,50 +398,63 @@ export default function App() {
       <aside className="sidebar" aria-label="Templates and history">
         <div className="panel templatesPanel">
           <h3>Templates</h3>
-          <ul className="templateList">
+          <small>Tap to load a template</small>
+          <div className="templates">
             {TEMPLATES.map((t) => (
-              <li
+              <div
                 key={t.title}
-                className={`templateItem ${
-                  selectedTemplate.title === t.title ? 'active' : ''
-                }`}
+                className="template"
                 onClick={() => loadTemplate(t)}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && loadTemplate(t)}
+                role="button"
               >
-                {t.title}
-              </li>
+                <strong>{t.title}</strong>
+                <p>{t.templates[0]}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
         <div className="panel historyPanel">
           <h3>History</h3>
-          {history.length === 0 && <p>No saved prompts yet.</p>}
-          <ul className="historyList">
-            {history.map(({ id, title, prompt }) => (
-              <li key={id} className="historyItem" title={prompt}>
-                <button
-                  className="historyLoadBtn"
-                  onClick={() => setResult(prompt)}
-                  aria-label={`Load prompt from ${title}`}
+          <small>{history.length} saved</small>
+          <div className="historyList">
+            {history.length ? (
+              history.map((h) => (
+                <div
+                  key={h.id}
+                  className="historyItem"
+                  onClick={() => setResult(h.prompt)}
+                  tabIndex={0}
+                  role="button"
                 >
-                  {title}: {prompt.slice(0, 40)}...
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <strong>{h.title}</strong>
+                  <p className="truncate">{h.prompt}</p>
+                </div>
+              ))
+            ) : (
+              <p>No saved prompts yet — generate one!</p>
+            )}
+          </div>
+
+          {history.length > 0 && (
+            <div className="historyActions">
+              <button
+                className="btn small"
+                onClick={() => {
+                  navigator.clipboard.writeText(history.map((h) => h.prompt).join('\n---\n'));
+                  alert('All prompts copied!');
+                }}
+              >
+                Copy All
+              </button>
+              <button className="btn small transparent" onClick={() => setHistory([])}>
+                Clear History
+              </button>
+            </div>
+          )}
         </div>
       </aside>
-
-      <footer className="footer">
-        <p>
-          Made with ❤️ by Gabriel Z. —{' '}
-          <a href="https://github.com/yourusername" target="_blank" rel="noreferrer">
-            GitHub
-          </a>
-        </p>
-      </footer>
     </div>
   );
 }
