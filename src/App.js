@@ -349,6 +349,18 @@ export default function App() {
             <option value="creative">Creative</option>
             <option value="formal">Formal</option>
             <option value="casual">Casual</option>
+            <option value="friendly">Friendly</option>
+            <option value="professional">Professional</option>
+            <option value="playful">Playful</option>
+            <option value="warm">Warm</option>
+            <option value="enthusiastic">Enthusiastic</option>
+            <option value="optimistic">Optimistic</option>
+            <option value="serious">Serious</option>
+            <option value="humorous">Humorous</option>
+            <option value="sarcastic">Sarcastic</option>
+            <option value="dramatic">Dramatic</option>
+            <option value="informative">Informative</option>
+            <option value="sincere">Sincere</option>
           </select>
 
           <select className="select" value={length} onChange={(e) => setLength(e.target.value)}>
@@ -398,63 +410,50 @@ export default function App() {
       <aside className="sidebar" aria-label="Templates and history">
         <div className="panel templatesPanel">
           <h3>Templates</h3>
-          <small>Tap to load a template</small>
-          <div className="templates">
+          <ul className="templateList">
             {TEMPLATES.map((t) => (
-              <div
+              <li
                 key={t.title}
-                className="template"
+                className={`templateItem ${
+                  selectedTemplate.title === t.title ? 'active' : ''
+                }`}
                 onClick={() => loadTemplate(t)}
                 tabIndex={0}
-                role="button"
+                onKeyDown={(e) => e.key === 'Enter' && loadTemplate(t)}
               >
-                <strong>{t.title}</strong>
-                <p>{t.templates[0]}</p>
-              </div>
+                {t.title}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <div className="panel historyPanel">
           <h3>History</h3>
-          <small>{history.length} saved</small>
-          <div className="historyList">
-            {history.length ? (
-              history.map((h) => (
-                <div
-                  key={h.id}
-                  className="historyItem"
-                  onClick={() => setResult(h.prompt)}
-                  tabIndex={0}
-                  role="button"
+          {history.length === 0 && <p>No saved prompts yet.</p>}
+          <ul className="historyList">
+            {history.map(({ id, title, prompt }) => (
+              <li key={id} className="historyItem" title={prompt}>
+                <button
+                  className="historyLoadBtn"
+                  onClick={() => setResult(prompt)}
+                  aria-label={`Load prompt from ${title}`}
                 >
-                  <strong>{h.title}</strong>
-                  <p className="truncate">{h.prompt}</p>
-                </div>
-              ))
-            ) : (
-              <p>No saved prompts yet — generate one!</p>
-            )}
-          </div>
-
-          {history.length > 0 && (
-            <div className="historyActions">
-              <button
-                className="btn small"
-                onClick={() => {
-                  navigator.clipboard.writeText(history.map((h) => h.prompt).join('\n---\n'));
-                  alert('All prompts copied!');
-                }}
-              >
-                Copy All
-              </button>
-              <button className="btn small transparent" onClick={() => setHistory([])}>
-                Clear History
-              </button>
-            </div>
-          )}
+                  {title}: {prompt.slice(0, 40)}...
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </aside>
+
+      <footer className="footer">
+        <p>
+          Made with ❤️ by Gabriel Z. —{' '}
+          <a href="https://github.com/yourusername" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
