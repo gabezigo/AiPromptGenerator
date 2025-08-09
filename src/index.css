@@ -326,37 +326,26 @@ body {
   margin-top: 0.8rem;
 }
 
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem 1.6rem; /* vertical gap 1.2rem, horizontal gap 1.6rem */
-  align-items: center;
+/* Make dropdowns take about half width and add vertical spacing */
+.controls .select {
+  flex: 0 1 48%;
+  margin-bottom: 1.6rem; /* space below each dropdown */
 }
 
-.select {
-  flex: 1 1 12rem; /* minimum width so they don’t shrink too much */
-  min-width: 12rem;
-  max-width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 0.1rem solid rgba(255, 255, 255, 0.04);
-  padding: 1rem;
-  border-radius: 1rem;
-  color: inherit;
-  font-size: 1.6rem;
-  cursor: pointer;
-}
-
+/* Make buttons wrap and have space between */
 .actions {
   display: flex;
-  gap: 1.2rem;
-  margin-top: 0.8rem; /* add a bit of vertical spacing */
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 1.6rem; /* space between buttons */
+  margin-top: 1.6rem; /* space above buttons */
 }
 
+/* Make buttons take about half width with margin below */
 .actions .btn {
-  min-width: 12rem; /* keep buttons a nice consistent width */
+  flex: 1 1 48%;
+  margin-bottom: 1.6rem;
 }
+
 
 
 
