@@ -332,6 +332,10 @@ body {
   margin-bottom: 1.6rem; /* space below each dropdown */
 }
 
+.tempSelect {
+  flex: 1 1 auto !important;
+}
+
  .actions {
   display: flex;
   flex-wrap: nowrap;  /* prevent wrapping */
