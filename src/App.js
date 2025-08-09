@@ -443,7 +443,7 @@ export default function App() {
       </aside>
               <footer className="footer">
   <p>
-    Made by Gabriel Z © {new Date().getFullYear()}
+    Made by Gabriel Z © {new Date().getFullYear()} v1.0 Beta
   </p>
 </footer>
 
