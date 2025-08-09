@@ -110,7 +110,7 @@ body {
 
 .controls {
   display: flex;
-  gap: 1.2rem;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
@@ -141,7 +141,7 @@ body {
 
 .actions {
   display: flex;
-  gap: 1.2rem;
+  gap: 2rem;
   align-items: center;
 }
 
