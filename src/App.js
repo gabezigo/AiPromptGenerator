@@ -441,6 +441,12 @@ export default function App() {
           </button>
         </div>
       </aside>
+              <footer className="footer">
+  <p>
+    Made by Gabriel Z © {new Date().getFullYear()}
+  </p>
+</footer>
+
     </div>
   );
 }
