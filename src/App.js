@@ -255,7 +255,6 @@ function fillTemplate(tmpl, tone, length) {
 
   let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
 
-
   const toneText = TONE_INSTRUCTIONS[tone] || 'Keep it casual and friendly.';
 
   const lengthText =
@@ -265,7 +264,7 @@ function fillTemplate(tmpl, tone, length) {
       ? 'Provide 2-3 sentences with examples.'
       : 'Write a longer detailed prompt with examples.';
 
-  filled +=  ${toneText} ${lengthText};
+  filled += ` ${toneText} ${lengthText}`;
 
   if (Math.random() > 0.7) filled += ' Add a quick example usage.';
 
