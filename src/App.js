@@ -129,6 +129,7 @@ const TEMPLATES = [
     ],
   },
 ];
+
 // Expanded word banks with many options
 const WORD_BANKS = {
   adjective: [
@@ -233,28 +234,28 @@ function randomChoice(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Fill template with random words or custom overrides and add tone/length instructions
-function fillTemplate(tmpl, tone, length, customWords = {}) {
+// Fill template with random words and add tone/length instructions (no custom overrides)
+function fillTemplate(tmpl, tone, length) {
   const replacements = {
     adjective: randomChoice(WORD_BANKS.adjective),
     adjective2: randomChoice(WORD_BANKS.adjective2),
-    toneWord: customWords.toneWord || tone,
-    product: customWords.product || randomChoice(WORD_BANKS.product),
+    toneWord: tone,
+    product: randomChoice(WORD_BANKS.product),
     features: randomChoice(WORD_BANKS.features),
-    audience: customWords.audience || randomChoice(WORD_BANKS.audience),
-    platform: customWords.platform || randomChoice(WORD_BANKS.platform),
-    topic: customWords.topic || randomChoice(WORD_BANKS.topic),
-    recipient: customWords.recipient || randomChoice(WORD_BANKS.recipient),
-    offer: customWords.offer || randomChoice(WORD_BANKS.offer),
-    benefit: customWords.benefit || randomChoice(WORD_BANKS.benefit),
-    theme: customWords.theme || randomChoice(WORD_BANKS.theme),
-    event: customWords.event || randomChoice(WORD_BANKS.event),
-    emotion: customWords.emotion || randomChoice(WORD_BANKS.emotion),
+    audience: randomChoice(WORD_BANKS.audience),
+    platform: randomChoice(WORD_BANKS.platform),
+    topic: randomChoice(WORD_BANKS.topic),
+    recipient: randomChoice(WORD_BANKS.recipient),
+    offer: randomChoice(WORD_BANKS.offer),
+    benefit: randomChoice(WORD_BANKS.benefit),
+    theme: randomChoice(WORD_BANKS.theme),
+    event: randomChoice(WORD_BANKS.event),
+    emotion: randomChoice(WORD_BANKS.emotion),
   };
 
   let filled = tmpl.replace(/\{(.*?)\}/g, (_, key) => replacements[key.trim()] || `{${key}}`);
 
-  const toneText = TONE_INSTRUCTIONS[replacements.toneWord] || 'Keep it casual and friendly.';
+  const toneText = TONE_INSTRUCTIONS[tone] || 'Keep it casual and friendly.';
 
   const lengthText =
     length === 'short'
@@ -283,33 +284,14 @@ export default function App() {
     }
   });
 
-  // Custom overrides for placeholders
-  const [customWords, setCustomWords] = useState({
-    product: '',
-    audience: '',
-    toneWord: '',
-    topic: '',
-    recipient: '',
-    offer: '',
-    benefit: '',
-    theme: '',
-    event: '',
-    emotion: '',
-    platform: '',
-  });
-
   useEffect(() => {
     localStorage.setItem('prompts', JSON.stringify(history));
   }, [history]);
 
   function generate() {
-    // Pick a random template sentence from the selected category
     const tmpl =
       selectedTemplate.templates[Math.floor(Math.random() * selectedTemplate.templates.length)];
-
-    // Fill placeholders with random words and add tone/length info and custom overrides
-    const prompt = fillTemplate(tmpl, tone, length, customWords);
-
+    const prompt = fillTemplate(tmpl, tone, length);
     setResult(prompt);
     setHistory((h) => [{ id: Date.now(), title: selectedTemplate.title, prompt }, ...h].slice(0, 30));
   }
@@ -336,11 +318,6 @@ export default function App() {
     setResult('');
   }
 
-  function handleCustomWordChange(e) {
-    const { name, value } = e.target;
-    setCustomWords((prev) => ({ ...prev, [name]: value }));
-  }
-
   return (
     <div className="container">
       <header className="header">
@@ -354,48 +331,7 @@ export default function App() {
       </header>
 
       <main className="panel main-panel">
-        {/* Custom inputs for overrides */}
-        <div
-          className="custom-inputs"
-          style={{
-            marginBottom: '1rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '0.5rem',
-          }}
-        >
-          {[
-            { label: 'Product', name: 'product' },
-            { label: 'Audience', name: 'audience' },
-            { label: 'Tone Word', name: 'toneWord' },
-            { label: 'Topic', name: 'topic' },
-            { label: 'Recipient', name: 'recipient' },
-            { label: 'Offer', name: 'offer' },
-            { label: 'Benefit', name: 'benefit' },
-            { label: 'Theme', name: 'theme' },
-            { label: 'Event', name: 'event' },
-            { label: 'Emotion', name: 'emotion' },
-            { label: 'Platform', name: 'platform' },
-          ].map(({ label, name }) => (
-            <input
-              key={name}
-              name={name}
-              placeholder={`${label} (custom)`}
-              value={customWords[name]}
-              onChange={handleCustomWordChange}
-              style={{
-                flex: '1 1 140px',
-                padding: '6px 8px',
-                fontSize: '0.9rem',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-              }}
-              autoComplete="off"
-            />
-          ))}
-        </div>
-
-        {/* Existing controls */}
+        {/* Controls */}
         <div className="controls">
           <select
             className="select"
