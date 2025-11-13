@@ -154,7 +154,6 @@ body::after {
   width: 100%;
   cursor: pointer;
   outline: none;
-  appearance: none;
   box-shadow:
     0 3px 10px rgba(0,0,0,0.55),
     0 0 20px rgba(59,130,246,0.12),
@@ -210,6 +209,10 @@ body::after {
     0 4px 12px rgba(0,0,0,0.6),
     inset 0 1px 0 rgba(255,255,255,0.9);
   transition: all 0.25s ease;
+  border-radius: 1rem;
+  border: none;
+  padding: 1rem 1.4rem;
+  font-size: 1.6rem;
 }
 
 .prompt-btn:hover, .copy-btn:hover {
@@ -267,7 +270,7 @@ body::after {
     inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
-.btn.small {
+.copy-btn.small {
   padding: 0.6rem 1rem;
   font-size: 1.4rem;
 }
@@ -315,7 +318,7 @@ body::after {
 }
 
 .controls .select {
-  flex: 1;
+  flex: 1 !important;
   margin-bottom: 0.6rem; 
 }
 

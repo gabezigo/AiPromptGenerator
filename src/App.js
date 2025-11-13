@@ -372,7 +372,7 @@ export default function App() {
         {/* Removed top textarea */}
 
         <div className="actions">
-          <button className="prompt-btn btn" onClick={generate}>
+          <button className="prompt-btn" onClick={generate}>
             Generate Prompt
           </button>
           <button className="btn transparent" onClick={() => setResult('')}>
@@ -386,7 +386,7 @@ export default function App() {
             <div className="resultHeader">
               <strong>Generated Prompt</strong>
               <div className="resultButtons">
-                <button className="copy-btn btn small" onClick={copyResult}>
+                <button className="copy-btn small" onClick={copyResult}>
                   Copy
                 </button>
                 <button className="btn small transparent" onClick={downloadResult}>
