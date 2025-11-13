@@ -418,29 +418,6 @@ export default function App() {
           </div>
         </div>
 
-        <div className="panel historyPanel">
-          <h3>History</h3>
-          <small>Recent prompts you generated</small>
-          <div className="historyList">
-            {history.length === 0 && <p>No prompts generated yet.</p>}
-            {history.map(({ id, title, prompt }) => (
-              <div
-                key={id}
-                className="historyItem"
-                onClick={() => setResult(prompt)}
-                tabIndex={0}
-                role="button"
-              >
-                <strong>{title}</strong>
-                <p>{prompt.length > 70 ? prompt.slice(0, 70) + '...' : prompt}</p>
-              </div>
-            ))}
-          </div>
-          <button className="btn transparent clearHistory" onClick={() => setHistory([])}>
-            Clear History
-          </button>
-        </div>
-      </aside>
               <footer className="footer">
   <p>
     Made by Gabriel Z © {new Date().getFullYear()} v1.0 Beta
