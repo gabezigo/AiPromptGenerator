@@ -105,7 +105,7 @@ body::after {
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: #ffffff;
   text-shadow: 0 0 20px rgba(59,130,246,0.25);
@@ -113,7 +113,7 @@ body::after {
 
 .subtitle {
   font-size: 1.3rem;
-   color: rgba(176,188,255,0.85);
+  color: rgba(255, 255, 255, 0.8);
   margin-top: 0.2rem;
 }
 
@@ -122,9 +122,12 @@ body::after {
    background: rgba(255,255,255,0.04);
   border-radius: 1rem;
   border: 1px solid rgba(99,102,241,0.8);
-  box-shadow:
-    0 8px 25px rgba(0,0,0,0.6),
-    inset 0 1px 0 rgba(255,255,255,0.06);
+ box-shadow:
+  0 0 25px rgba(129, 140, 248, 0.35),
+  0 0 55px rgba(99, 102, 241, 0.25),
+  0 8px 22px rgba(0,0,0,0.35),
+  inset 0 0 18px rgba(129, 140, 248, 0.2),
+  inset 0 0 45px rgba(99, 102, 241, 0.15);
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -135,6 +138,11 @@ body::after {
   padding: 2rem;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.main-panel:hover {
+  transform: translateY(-3px) scale(1.01);
 }
 
 .controls {
@@ -217,6 +225,7 @@ body::after {
   border: none;
   padding: 1rem 1.4rem;
   font-size: 1.6rem;
+  cursor: pointer;
 }
 
 .prompt-btn:hover, .copy-btn:hover {
@@ -363,6 +372,31 @@ body::after {
     align-items: center;
     width: 100%;
     gap: 2rem;
+}
+
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05); 
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.25) rgba(255,255,255,0.05);
 }
 
 /* Responsive */
