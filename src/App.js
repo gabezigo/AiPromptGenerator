@@ -325,7 +325,7 @@ export default function App() {
 
   return (
     <div className="container">
-      <div>
+      <div className="top">
       <header className="header">
         <div className="brand">
           <div className="logo">AI</div>
