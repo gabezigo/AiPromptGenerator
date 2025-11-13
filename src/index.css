@@ -317,6 +317,7 @@ body::after {
 .controls .select {
   flex: 1;
   margin-bottom: 0.6rem; 
+}
 
 .tempSelect {
   flex: 1 1 auto !important;
