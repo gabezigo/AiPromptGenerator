@@ -398,26 +398,7 @@ export default function App() {
         )}
       </main>
 
-      <aside className="sidebar" aria-label="Templates and history">
-        <div className="panel templatesPanel">
-          <h3>Templates</h3>
-          <small>Tap to load a template</small>
-          <div className="templates">
-            {TEMPLATES.map((t) => (
-              <div
-                key={t.title}
-                className="template"
-                onClick={() => loadTemplate(t)}
-                tabIndex={0}
-                role="button"
-              >
-                <strong>{t.title}</strong>
-                <p>{t.templates[0]}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
+   
               <footer className="footer">
   <p>
     Made by Gabriel Z © {new Date().getFullYear()} v1.0 Beta
