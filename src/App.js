@@ -325,6 +325,7 @@ export default function App() {
 
   return (
     <div className="container">
+      <div>
       <header className="header">
         <div className="brand">
           <div className="logo">AI</div>
@@ -397,6 +398,7 @@ export default function App() {
           </div>
         )}
       </main>
+      </div>
 
    
               <footer className="footer">
