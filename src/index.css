@@ -409,7 +409,7 @@ body::after {
  .controls, .actions {
   flex-direction: column;
  }
- .actions buttons {
+ .actions button {
   width: 100%;
  }
 }
