@@ -420,7 +420,7 @@ body::after {
  }
 
  .copy-btn {
-  padding: 1rem 1.4rem;
+  padding: 1rem 1.4rem !important;
  }
  .actions button, .resultButtons {
   width: 100%;
