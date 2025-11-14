@@ -406,10 +406,23 @@ body::after {
 }
 
 @media (max-width: 38em) {
- .controls, .actions {
+ .controls, .actions, .resultHeader, .resultButtons {
   flex-direction: column;
  }
- .actions button {
+
+ .resultHeader {
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+ }
+ .resultButtons {
+  gap:2rem;
+ }
+
+ .copy-btn {
+  padding: 1rem 1.4rem;
+ }
+ .actions button, .resultButtons {
   width: 100%;
  }
 }
