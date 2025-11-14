@@ -264,7 +264,7 @@ body::after {
 
 .btn.transparent { 
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.1);
   color: #f7f9ff;
   border-radius: 0.75rem;
   padding: 0.8rem 1.5rem;
@@ -378,28 +378,22 @@ body::after {
     gap: 2rem;
 }
 
-/* Chrome / Edge / Safari / Opera */
-.resultText::-webkit-scrollbar {
-  width: 6px;
+.resultText,
+.resultCard {
+  scrollbar-width: auto;          /* Firefox default */
+  scrollbar-color: auto;          /* Firefox default */
 }
 
-.resultText::-webkit-scrollbar-track {
-  background: transparent;
+.resultText::-webkit-scrollbar,
+.resultCard::-webkit-scrollbar {
+  width: auto;                    /* Chrome default */
 }
 
-.resultText::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
-  border-radius: 8px;
-}
-
-.resultText::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.18);
-}
-
-/* Firefox */
-.resultText {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.18) transparent;
+.resultText::-webkit-scrollbar-track,
+.resultCard::-webkit-scrollbar-track,
+.resultText::-webkit-scrollbar-thumb,
+.resultCard::-webkit-scrollbar-thumb {
+  background: initial;            /* Reset to system UI */
 }
 
 
