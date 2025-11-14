@@ -343,11 +343,6 @@ body::after {
   margin-bottom: 0.6rem; 
 }
 
-.tempSelect {
-  flex: 1 1 auto !important;
-  margin-bottom: 0.2rem !important;
-}
-
  .actions {
   display: flex;
   flex-wrap: nowrap; 
@@ -383,16 +378,30 @@ body::after {
     gap: 2rem;
 }
 
+/* Chrome / Edge / Safari / Opera */
 .resultText::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
-.resultText::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
-  border-radius: 10px;
-}
+
 .resultText::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.resultText::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+}
+
+.resultText::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.18);
+}
+
+/* Firefox */
+.resultText {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+
 
 
 /* Responsive */
