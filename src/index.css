@@ -121,7 +121,7 @@ body::after {
 .main-panel {
    background: rgba(255,255,255,0.04);
   border-radius: 1rem;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid rgba(99, 102, 241, 0.5);
   box-shadow:
   0 0 25px rgba(99, 102, 241, 0.15),
   inset 0 0 8px rgba(255, 255, 255, 0.06);
@@ -378,24 +378,22 @@ body::after {
     gap: 2rem;
 }
 
-.resultText,
-.resultCard {
-  scrollbar-width: auto;          /* Firefox default */
-  scrollbar-color: auto;          /* Firefox default */
-}
-
-.resultText::-webkit-scrollbar,
 .resultCard::-webkit-scrollbar {
-  width: auto;                    /* Chrome default */
+  width: 8px;
 }
 
-.resultText::-webkit-scrollbar-track,
-.resultCard::-webkit-scrollbar-track,
-.resultText::-webkit-scrollbar-thumb,
+.resultCard::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .resultCard::-webkit-scrollbar-thumb {
-  background: initial;            /* Reset to system UI */
+  background: rgba(148, 163, 184, 0.75);
+  border-radius: 999px;
 }
 
+.resultCard::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 1);
+}
 
 
 /* Responsive */
