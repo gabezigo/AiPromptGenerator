@@ -258,9 +258,7 @@ body::after {
   font-size: 1.6rem;
 }
 
-.copy-btn {
-  border: solid 1px #fff !important;
-}
+
 
 .btn:active {
   transform: translateY(0.1rem);
