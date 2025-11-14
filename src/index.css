@@ -399,8 +399,17 @@ body::after {
 
 
 /* Responsive */
-@media (max-width: 62.5rem) {
+@media (max-width: 62.5em) {
   .resultCard {
     max-height: 12rem;
   }
+}
+
+@media (max-width: 38em) {
+ .controls, .actions {
+  flex-direction: column;
+ }
+ .actions buttons {
+  width: 100%;
+ }
 }
