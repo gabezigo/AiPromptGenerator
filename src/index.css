@@ -122,12 +122,9 @@ body::after {
    background: rgba(255,255,255,0.04);
   border-radius: 1rem;
   border: 1px solid rgba(99,102,241,0.8);
- box-shadow:
-  0 0 25px rgba(129, 140, 248, 0.35),
-  0 0 55px rgba(99, 102, 241, 0.25),
-  0 8px 22px rgba(0,0,0,0.35),
-  inset 0 0 18px rgba(129, 140, 248, 0.2),
-  inset 0 0 45px rgba(99, 102, 241, 0.15);
+  box-shadow:
+  0 0 22px rgba(99, 102, 241, 0.32),
+  0 10px 28px rgba(0, 0, 0, 0.38);
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -308,12 +305,19 @@ body::after {
   overflow-x: hidden;
   max-height: 14rem;
   overflow-y: auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .resultHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.resultHeader strong {
+  color: #fff;
 }
 
 .resultButtons {
@@ -328,6 +332,7 @@ body::after {
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .controls .select {
@@ -358,10 +363,11 @@ body::after {
   text-align: center;
   padding: 12px 0;
   font-size: 1rem;
-  color: #666;
+  color: #fff;
   border-top: 1px solid #ddd;
   margin-top: 20px;
   width: 100%;
+  font-size: 1.2rem;
 }
 
 .top {
